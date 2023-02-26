@@ -1,0 +1,64 @@
+Init disk...
+Init disk [OK]
+Parse instructions...
+
+Phase2!
+
+Phase3!
+
+Phase4!
+Parse instructions [OK]
+
+-------------------------
+Time information:
+
+230.000000 seconds total
+-------------------------
+Disk information:
+
+Size of disk = 443 GB
+-------------------------
+Transaction information:
+
+Total number of instructions        =           434444 instructions
+Total number of read instructions   =                0 instructions
+Total number of write instructions  =           434444 instructions
+Total number of invalid read        =                0 blocks
+Total number of invalid write       =                0 blocks
+Total size of read instructions   =                0 MB
+Total size of write instructions  =             1697 MB
+
+-------------------------
+Total write top buffer size =                 405 MB
+Total read scp size         =                 388 MB
+Total scp count             =               99399 times
+Total block swap count      =                   0 blocks
+#########################
+######## Latency ########
+#########################
+Secure Deletion Latency     =       2959434457518 ns
+Data Write Latency          =      31959027178526 ns
+Data Read Latency           =       2959434457518 ns
+#########################
+######### Size ##########
+#########################
+Accumulated Write Size      =       1067200806912 B
+Accumulated Rewrite Size    =        370289934336 B
+Accumulated Reread Size     =        556053561344 B
+#########################
+Secure Deletion:
+Accumulated Write Size      =        208454811648 B
+Accumulated Rewrite Size    =                   0 B
+Accumulated Reread Size     =                   0 B
+#########################
+Total Write Block Size      =       1067200806912 B
+Total Read Block Size       =        208454811648 B
+Total Delete Block Size     =        208454811648 B
+#########################
+DEDUPE for information
+update_block_size           =        439227514880 B
+actual_write_size           =        858745995264 B
+not_write_size              =         52349108224 B
+total_size                  =        911095103488 B
+Storage usage               =               97.24  %
+End

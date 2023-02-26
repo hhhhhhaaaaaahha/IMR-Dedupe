@@ -1,0 +1,61 @@
+Init disk...
+Init disk [OK]
+Parse instructions...
+
+Phase2!
+
+Phase3!
+
+Phase4!
+Parse instructions [OK]
+
+-------------------------
+Time information:
+
+223.000000 seconds total
+-------------------------
+Disk information:
+
+Size of disk = 425 GB
+-------------------------
+Transaction information:
+
+Total number of instructions        =           434444 instructions
+Total number of read instructions   =                0 instructions
+Total number of write instructions  =           434444 instructions
+Total number of invalid read        =                0 blocks
+Total number of invalid write       =                0 blocks
+Total size of read instructions   =                0 MB
+Total size of write instructions  =             1697 MB
+
+-------------------------
+Total write top buffer size =                   0 MB
+Total read scp size         =                   0 MB
+Total scp count             =                   0 times
+Total block swap count      =                   0 blocks
+#########################
+######## Latency ########
+#########################
+Secure Deletion Latency     =                   0 ns
+Data Write Latency          =      22971682395492 ns -9.4265%
+Data Read Latency           =                   0 ns
+#########################
+######### Size ##########
+#########################
+Accumulated Write Size      =        867291889664 B
+Accumulated Rewrite Size    =        235063476224 B 0.7677%
+Accumulated Reread Size     =        352596262912 B -19.3089%
+#########################
+Secure Deletion:
+Accumulated Write Size      =                   0 B
+Accumulated Rewrite Size    =                   0 B
+Accumulated Reread Size     =                   0 B
+#########################
+Total Write Block Size      =        867291889664 B
+Total Read Block Size       =                   0 B
+Total Delete Block Size     =                   0 B
+update_block_size           =        502909632512 B
+actual_write_size           =        867291889664 B
+not_write_size              =         43803213824 B
+total_size                  =        911095103488 B
+End
