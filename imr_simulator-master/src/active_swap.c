@@ -47,7 +47,7 @@ void ltp_table_swap(struct disk *d, unsigned long old_pba, unsigned new_pba)
 void DEDU_createBlockSwap(struct disk *d, unsigned long from, unsigned long to)
 {
     d->report.current_block_swap_count++;
-    rw_block(d, from, to);
+    rw_block(d, from, to); // 是否可以調整?
     ltp_table_swap(d, from, to);
     block_info_swap(d, to, from);
 }
@@ -63,11 +63,11 @@ unsigned long find_unused_bottom_block(struct disk *d)
         }
         is_bottom_has_trimed_track = false;
     }
-    for (uint64_t i = 0; i < max; i += 2)
-    {
-        if (d->storage[i].referenced_count == 0)
-            return i;
-    }
+    // for (uint64_t i = 0; i < max; i += 2) // 註解掉
+    // {
+    //     if (d->storage[i].referenced_count == 0)
+    //         return i;
+    // }
     return -1;
 }
 bool is_top_should_be_swap(struct disk *d, unsigned long tba)
@@ -96,10 +96,10 @@ unsigned long DEDU_run_block_swap(struct disk *d, unsigned long bba)
     // printf("block swap is called\n");
     // printf("bba = %lu\n", bba);
 #ifdef TRIM
-    unsigned long next_tba = bba + 1;
+    unsigned long next_tba = bba + 1; // 該 bottom track 的後面一個 top track
     if (bba != 0)
     {
-        unsigned long pre_tba = bba - 1;
+        unsigned long pre_tba = bba - 1; // 該 bottom track 的前面一個 top track
         inversion_swap(d, pre_tba, bba);
     }
     inversion_swap(d, next_tba, bba);

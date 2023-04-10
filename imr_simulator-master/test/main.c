@@ -318,6 +318,7 @@ int main(int argc, char **argv)
 	printf("Total number of instructions        = %16lu instructions\n", report->ins_count);
 	printf("Total number of read instructions   = %16lu instructions\n", report->read_ins_count);
 	printf("Total number of write instructions  = %16lu instructions\n", report->write_ins_count);
+	printf("Total number of delete instructions  = %16lu instructions\n", report->delete_ins_count);
 	printf("Total number of invalid read        = %16lu blocks\n", report->num_invalid_read);
 	printf("Total number of invalid write       = %16lu blocks\n", report->num_invalid_write);
 	printf("Total size of read instructions   = %16lu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);
@@ -335,6 +336,7 @@ int main(int argc, char **argv)
 	fprintf(fp, "Total number of instructions        = %16lu instructions\n", report->ins_count);
 	fprintf(fp, "Total number of read instructions   = %16lu instructions\n", report->read_ins_count);
 	fprintf(fp, "Total number of write instructions  = %16lu instructions\n", report->write_ins_count);
+	fprintf(fp, "Total number of delete instructions  = %16lu instructions\n", report->delete_ins_count);
 	fprintf(fp, "Total number of invalid read        = %16lu blocks\n", report->num_invalid_read);
 	fprintf(fp, "Total number of invalid write       = %16lu blocks\n", report->num_invalid_write);
 	fprintf(fp, "Total size of read instructions   = %16lu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);

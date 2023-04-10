@@ -448,10 +448,14 @@ unsigned long DEDU_find_next_pba(struct disk *d, unsigned long t, char *hash)
 }
 bool DEDU_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
 {
+    // 改
     unsigned long pba = lba_to_pba(d, lba);
     *p = pba;
     if (DEDU_is_ltp_mapping_valid(d, lba, hash) && d->ltp_table_head->table[lba].trim)
         return true;
+    // 改
+    // if (d->ltp_table_head->table[lba].trim)
+    //     return true;
     return false;
 }
 // 檢查lba是不是valid，如果是valid的話透過*p來接找到的pba
@@ -551,7 +555,7 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
 #endif
 unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, char *hash)
 {
-    if (!is_toptrack(pba))
+    if (!is_toptrack(pba)) // 如果是 bottom track 的話
     {
         unsigned long prev_track = pba - 1;
         unsigned long next_track = pba + 1;
@@ -563,7 +567,7 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
                 tba = DEDU_run_block_swap(d, pba);
                 if ((signed)tba != -1)
                 {
-                    DEDU_update_ltp_table(d, lba, tba, hash);
+                    DEDU_update_ltp_table(d, lba, tba, hash); // 改
                     return tba;
                 }
             }
@@ -576,6 +580,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 {
     unsigned long pba;
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) || DEDU_is_lba_valid(d, lba, hash, &pba))
+    // if (DEDU_is_lba_valid(d, lba, hash, &pba)) // 改
     {
 #ifdef DEDU_WRITE
         pba = DEDU_update(d, lba, pba, hash);
