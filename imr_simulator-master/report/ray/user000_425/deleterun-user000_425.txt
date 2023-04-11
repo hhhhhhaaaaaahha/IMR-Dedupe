@@ -12,7 +12,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-104.000000 seconds total
+108.000000 seconds total
 -------------------------
 Disk information:
 
@@ -23,6 +23,7 @@ Transaction information:
 Total number of instructions        =           460510 instructions
 Total number of read instructions   =                0 instructions
 Total number of write instructions  =           434444 instructions
+Total number of delete instructions  =            26066 instructions
 Total number of invalid read        =                0 blocks
 Total number of invalid write       =                0 blocks
 Total size of read instructions   =                0 MB

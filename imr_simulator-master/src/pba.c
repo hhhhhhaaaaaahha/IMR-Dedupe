@@ -448,12 +448,10 @@ unsigned long DEDU_find_next_pba(struct disk *d, unsigned long t, char *hash)
 }
 bool DEDU_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
 {
-    // 改
     unsigned long pba = lba_to_pba(d, lba);
     *p = pba;
     if (DEDU_is_ltp_mapping_valid(d, lba, hash) && d->ltp_table_head->table[lba].trim)
         return true;
-    // 改
     // if (d->ltp_table_head->table[lba].trim)
     //     return true;
     return false;

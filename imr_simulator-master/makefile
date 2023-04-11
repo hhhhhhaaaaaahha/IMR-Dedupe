@@ -18,7 +18,7 @@ TETFLAGS = src/lba.c src/active_swap.c src/parse.c src/top_buffer.c src/scp.c sr
 .PHONY: clean dirs valgrind dedupe_write cmr nodedupe dedupeorigin trim gtest
 # zalloc topbuffer blockswap vg blockswap_virtual
 # all:gtest
-all: ray_dedupe_write ray_trim # nodedupe dedupeorigin dedupe_write trim
+all: ray_dedupe_write ray_trim # adjusted_write adjusted_trim nodedupe dedupeorigin dedupe_write trim
 
 gtest:
 	$(CXX) $(CPPFLAGS) -DDEDU_WRITE test/ut_main.cpp -o bin/ut_all $(GTESTGLAGS) $(LDFLAGS) $(TETFLAGS)
@@ -40,6 +40,12 @@ ray_dedupe_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 
 ray_trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/ray_trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+
+adjusted_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE test/main.c -o bin/adjusted_dedupewrite $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+
+adjusted_trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/adjusted_trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
 cmr: $(OBJS) dirs
 	$(CC) $(CFLAGS) $(LDFLAGS) -DCMR test/main.c -o bin/cmr $(OBJS)
@@ -138,7 +144,7 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: deleterun trimrun ray_deleterun ray_trimrun
+run: deleterun trimrun ray_deleterun ray_trimrun adjusted_deleterun adjusted_trimrun
 
 test_delete:
 	./bin/dedupewrite -d -i trace/test.csv -o report/test.txt -s 1 -l 1
@@ -152,9 +158,11 @@ deleterun: bin/dedupewrite
 	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_1096.txt -s 1096 -l 1096
 	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_2191.txt -s 2191 -l 1096
 
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion_30.csv -o report/deleterun-normal_deletion_30_600.txt -s 600 -l 2048
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion_30.csv -o report/deleterun-normal_deletion_30_600.txt -s 500 -l 2048
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion_30.csv -o report/deleterun-normal_deletion_30.txt -s 850 -l 2048
+	# ./bin/dedupewrite -d -i ../trace/normal/30.csv -o report/deleterun-normal_30_266.txt -s 266 -l 2048
+	
+	# ./bin/dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/deleterun-normal_deletion_30_300.txt -s 300 -l 2048
+	# ./bin/dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/deleterun-normal_deletion_30_600.txt -s 500 -l 2048
+	# ./bin/dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/deleterun-normal_deletion_30.txt -s 850 -l 2048
 	
 trimrun: bin/trim
 	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_425.txt -s 425 -l 425
@@ -165,27 +173,35 @@ trimrun: bin/trim
 	# ./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_1096.txt -s 1096 -l 1096
 	# ./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_2191.txt -s 2191 -l 1096
 
-	# ./bin/trim -d -i ../trace/normal_deletion_30.csv -o report/trim-normal_deletion_30_600.txt -s 600 -l 2048
-	# ./bin/trim -d -i ../trace/normal_deletion_30.csv -o report/trim-normal_deletion_30.txt -s 500 -l 2048
-	# ./bin/trim -d -i ../trace/normal_deletion_30.csv -o report/trim-normal_deletion_30.txt -s 850 -l 2048
+	# ./bin/trim -d -i ../trace/normal/30.csv -o report/trim-normal_30_266.txt -s 266 -l 2048
+	
+	# ./bin/trim -d -i ../trace/normal_deletion/30.csv -o report/trim-normal_deletion_30_300.txt -s 300 -l 2048
+	# ./bin/trim -d -i ../trace/normal_deletion/30.csv -o report/trim-normal_deletion_30.txt -s 500 -l 2048
+	# ./bin/trim -d -i ../trace/normal_deletion/30.csv -o report/trim-normal_deletion_30.txt -s 850 -l 2048
 
 ray_deleterun: bin/ray_dedupewrite
+	# ./bin/ray_dedupewrite -d -i ../trace/normal/30.csv -o report/ray_deleterun-normal_30_266.txt -s 266 -l 2048
+	
 	# ./bin/ray_dedupewrite -d -i ../trace/user000.csv -o report/ray_deleterun-user000_425.txt -s 425 -l 425
-	# ./bin/ray_dedupewrite -d -i ../trace/normal_deletion_30.csv -o report/ray_deleterun-normal_deletion_30_600.txt -s 600 -l 2048
+	# ./bin/ray_dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/ray_deleterun-normal_deletion_30_300.txt -s 300 -l 2048
 
 ray_trimrun: bin/ray_trim
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/0.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/1.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/2.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/3.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/4.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/5.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/6.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/7.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/8.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user000.csv -o report/9.txt -s 425 -l 425
+	# ./bin/ray_trim -d -i ../trace/normal/30.csv -o report/ray_trim-normal_30_266.txt -s 266 -l 2048
+	
 	# ./bin/ray_trim -d -i ../trace/user000.csv -o report/ray_trim-user000_425.txt -s 425 -l 425
-	# ./bin/ray_trim -d -i ../trace/normal_deletion_30.csv -o report/ray_trim-normal_deletion_30_600.txt -s 600 -l 2048
+	# ./bin/ray_trim -d -i ../trace/normal_deletion/30.csv -o report/ray_trim-normal_deletion_30_300.txt -s 300 -l 2048
+
+adjusted_deleterun: bin/adjusted_dedupewrite
+	./bin/adjusted_dedupewrite -d -i ../trace/normal/30.csv -o report/adjusted_deleterun-normal_30_266.txt -s 266 -l 2048
+	
+	# ./bin/adjusted_dedupewrite -d -i ../trace/user000.csv -o report/adjusted_deleterun-user000_425.txt -s 425 -l 425
+	# ./bin/adjusted_dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/adjusted_deleterun-normal_deletion_30_300.txt -s 300 -l 2048
+
+adjusted_trimrun: bin/adjusted_trim
+	./bin/adjusted_trim -d -i ../trace/normal/30.csv -o report/adjusted_trim-normal_30_266.txt -s 266 -l 2048
+	
+	# ./bin/adjusted_trim -d -i ../trace/user000.csv -o report/adjusted_trim-user000_425.txt -s 425 -l 425
+	# ./bin/adjusted_trim -d -i ../trace/normal_deletion/30.csv -o report/adjusted_trim-normal_deletion_30_300.txt -s 300 -l 2048
 
 nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_425.txt -s 425 -l 425
