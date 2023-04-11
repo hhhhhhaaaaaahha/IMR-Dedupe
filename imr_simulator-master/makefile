@@ -144,16 +144,7 @@ test_delete:
 	./bin/dedupewrite -d -i trace/test.csv -o report/test.txt -s 1 -l 1
 
 deleterun: bin/dedupewrite
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/0.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/1.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/2.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/3.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/4.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/5.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/6.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/7.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/8.txt -s 425 -l 425
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/9.txt -s 425 -l 425
+	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_425.txt -s 425 -l 425
 	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_488.txt -s 488 -l 425
 	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_781.txt -s 781 -l 425
 	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_848.txt -s 848 -l 425
@@ -183,6 +174,16 @@ ray_deleterun: bin/ray_dedupewrite
 	# ./bin/ray_dedupewrite -d -i ../trace/normal_deletion_30.csv -o report/ray_deleterun-normal_deletion_30_600.txt -s 600 -l 2048
 
 ray_trimrun: bin/ray_trim
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/0.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/1.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/2.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/3.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/4.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/5.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/6.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/7.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/8.txt -s 425 -l 425
+	./bin/ray_trim -d -i ../trace/user000.csv -o report/9.txt -s 425 -l 425
 	# ./bin/ray_trim -d -i ../trace/user000.csv -o report/ray_trim-user000_425.txt -s 425 -l 425
 	# ./bin/ray_trim -d -i ../trace/normal_deletion_30.csv -o report/ray_trim-normal_deletion_30_600.txt -s 600 -l 2048
 
