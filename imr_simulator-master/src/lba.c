@@ -559,10 +559,10 @@ bool is_in_storage_fully_search(struct disk *d, char *hash, unsigned long *pba)
     }
     return false;
 }
-bool is_lba_in_storage(struct disk *d,unsigned long pba, unsigned long lba)
+bool is_lba_in_storage(struct disk *d, unsigned long pba, unsigned long lba)
 {
-    for (unsigned long i = 0; i < d->storage->referenced_count + 1;i++)
-        if(d->storage[pba].lba[i] == lba)
+    for (unsigned long i = 0; i < d->storage->referenced_count + 1; i++)
+        if (d->storage[pba].lba[i] == lba)
             return true;
     return false;
 }
@@ -585,8 +585,14 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash)
     }
     for (size_t i = 0; i < n; i++)
     {
+        // if (d->storage[1].status == status_booked)
+        // {
+        //     printf("YESSSSSSSSS\n");
+        // }
         unsigned long pba;
+        // printf("lba=%ld\n", lba);
         pba = DEDU_pba_search(d, lba + i, hash);
+        // printf("------------------------------------------------\n");
         assert(pba < d->report.max_block_num);
 #ifdef NO_DEDU
         d->storage[pba].lba[0] = lba + i;

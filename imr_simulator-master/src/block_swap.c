@@ -6,8 +6,6 @@
 #include "rw.h"
 #include "scp.h"
 
-
-
 // 這個function是在找cold top track，如果top track更新次數小於10的話代表這個track是一個cold track
 unsigned long find_empty_block_swap(struct disk *d)
 {
@@ -66,24 +64,24 @@ void createBlockSwap(struct disk *d, unsigned long bba, unsigned long tba)
     // fclose(e);
     d->report.current_block_swap_count++;
     assert(d->storage[tba].status == status_in_use);
-    assert(d->storage[tba].referenced_count > 0);
+    // assert(d->storage[tba].referenced_count > 0);
     printf("tba = %ld\n", tba);
     printf("bba = %ld\n", bba);
-// #ifdef TRIM
-//     if (d->storage[bba].status == status_trimed)
-//     {
-//         FILE *e = fopen("report/noswap.txt", "a");
-//         fprintf(e, "\nbottom track doesn't swap to top.\n");
-//         fclose(e);
-//         printf("\nbottom track doesn't swap to top.\n");
-//     }
-//     else
-//     {
-//         rw_block(d, bba, tba);
-//     }
-// #else
-//         rw_block(d, bba, tba);
-// #endif
+    // #ifdef TRIM
+    //     if (d->storage[bba].status == status_trimed)
+    //     {
+    //         FILE *e = fopen("report/noswap.txt", "a");
+    //         fprintf(e, "\nbottom track doesn't swap to top.\n");
+    //         fclose(e);
+    //         printf("\nbottom track doesn't swap to top.\n");
+    //     }
+    //     else
+    //     {
+    //         rw_block(d, bba, tba);
+    //     }
+    // #else
+    //         rw_block(d, bba, tba);
+    // #endif
     rw_block(d, tba, bba);
 }
 

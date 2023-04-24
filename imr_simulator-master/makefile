@@ -18,7 +18,7 @@ TETFLAGS = src/lba.c src/active_swap.c src/parse.c src/top_buffer.c src/scp.c sr
 .PHONY: clean dirs valgrind dedupe_write cmr nodedupe dedupeorigin trim gtest
 # zalloc topbuffer blockswap vg blockswap_virtual
 # all:gtest
-all: ray_dedupe_write ray_trim # adjusted_write adjusted_trim nodedupe dedupeorigin dedupe_write trim
+all: nodedupe dedupeorigin # dedupe_write trim ray_dedupe_write ray_trim
 
 gtest:
 	$(CXX) $(CPPFLAGS) -DDEDU_WRITE test/ut_main.cpp -o bin/ut_all $(GTESTGLAGS) $(LDFLAGS) $(TETFLAGS)
@@ -144,7 +144,7 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: deleterun trimrun ray_deleterun ray_trimrun # adjusted_deleterun adjusted_trimrun
+run: nodeduperun dedupeoriginrun#deleterun trimrun ray_deleterun ray_trimrun
 
 test_delete:
 	./bin/dedupewrite -d -i trace/test.csv -o report/test.txt -s 1 -l 1
@@ -214,6 +214,7 @@ adjusted_trimrun: bin/adjusted_trim
 	# ./bin/adjusted_trim -d -i ../trace/normal_deletion/huge_deletion.csv -o report/adjusted_trim-huge_deletion_600.txt -s 600 -l 2048
 
 nodeduperun: bin/nodedupe
+	./bin/nodedupe -d 1 -i ../trace/user000.csv -o report/nodedupe-test.txt -s 519 -l 700
 	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_425.txt -s 425 -l 425
 	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_488.txt -s 488 -l 425
 	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_781.txt -s 781 -l 425
@@ -223,9 +224,10 @@ nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/nodedupe-user002_128kb_lba_t1_half_1_2191.txt -s 2191 -l 1096
 
 dedupeoriginrun: bin/dedupeorigin
+	# ./bin/dedupeorigin -d 1 -i ../trace/user000.csv -o report/dedupeorigin-test.txt -s 425 -l 600
 	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_425.txt -s 425 -l 425
 	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_488.txt -s 488 -l 425
-	./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_781.txt -s 781 -l 425
+	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_781.txt -s 781 -l 425
 	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_848.txt -s 848 -l 425
 	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/dedupeorigin-user002_128kb_lba_t1_half_1_685.txt -s 685 -l 1096
 	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/dedupeorigin-user002_128kb_lba_t1_half_1_1096.txt -s 1096 -l 1096

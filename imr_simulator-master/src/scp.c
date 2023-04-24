@@ -122,8 +122,10 @@ size_t run_scp(struct disk *d, unsigned long track)
         }
 #endif
         count++;
+        // printf("bba=%ld\n", bba);
     }
     int read_count = _batch_read(d, &scp_top_mtable);
+    // printf("batch_delete_called\n");
     batch_delete(d, &scp_top_mtable);
     // write bottom track
     int write_count = batch_write(d, &scp_bottom_mtable);

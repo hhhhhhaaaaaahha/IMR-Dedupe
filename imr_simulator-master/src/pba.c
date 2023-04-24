@@ -308,7 +308,8 @@ int pba_delete(struct disk *d, b_table_head_t *h)
     for (size_t i = 0; i < bbh->size; i++) // 跑迴圈，跑所有的block table裡面的entry
     {
         unsigned long pba = bbh->table[i].pba; // pba = 當下這個迴圈的h->block.head.table的pba
-        chs_delete(d, pba);                    // 呼叫chs_write這個function
+        // printf("pba=%ld, %s\n", pba, d->storage[pba].hash);
+        chs_delete(d, pba); // 呼叫chs_write這個function
     }
     d->report.total_delete_write_block_size += sum * BLOCK_SIZE; // d->report.total_delete_write_actual_size再加上sum * SECTOR_SIZE，也就是加上這次實際總共刪除的大小
     return sum;                                                  // 最後把sum return
@@ -577,14 +578,24 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
 unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 {
     unsigned long pba;
+#ifndef NO_DEDU
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) || DEDU_is_lba_valid(d, lba, hash, &pba))
     // if (DEDU_is_lba_valid(d, lba, hash, &pba)) // 改
     {
+        // printf("pba=%ld\n", pba);
 #ifdef DEDU_WRITE
+
         pba = DEDU_update(d, lba, pba, hash);
-        return pba;
 #endif
+        return pba;
     }
+#else
+    if (DEDU_is_lba_valid(d, lba, hash, &pba))
+    {
+        return pba;
+    }
+#endif
+
 #ifndef NO_DEDU
     bool is_in_storage_flag = is_in_storage(d, hash, &pba);
     bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);

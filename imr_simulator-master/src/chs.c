@@ -18,9 +18,10 @@ int chs_read(struct disk *d, unsigned long base)
 
 void chs_write(struct disk *d, unsigned long pba)
 {
-    block_status_t status = d->storage[pba].status;                 // 宣告status = d->storage[pba].status
+    block_status_t status = d->storage[pba].status; // 宣告status = d->storage[pba].status
+    // printf("%d\n", status);
     assert((status == status_booked) || (status == status_in_use) || (status == status_trimed)); // 檢查如果status!=status_booked或者!=status_in_use的時候跳出
-    if (status != status_in_use)                                    // 如果status!=status_in_use的話
+    if (status != status_in_use)                                                                 // 如果status!=status_in_use的話
     {
         d->storage[pba].status = status_in_use; // 把d->storage[pba].status改成status_in_use
         d->report.current_use_block_num++;      // d->report.current_use_block_num+1
@@ -34,7 +35,7 @@ void chs_write(struct disk *d, unsigned long pba)
 
 void chs_delete(struct disk *d, unsigned long pba)
 {
-    unsigned long lba = d->storage[pba].lba[0];        // 宣告lba = d->storage[pba].lba
+    unsigned long lba = d->storage[pba].lba[0];     // 宣告lba = d->storage[pba].lba
     block_status_t status = d->storage[pba].status; // 宣告status = d->storage[pba].status
     if (status != status_in_use)                    // 如果status!=status_in_use的話
     {
@@ -43,6 +44,7 @@ void chs_delete(struct disk *d, unsigned long pba)
         fprintf(stderr, "%s\n", d->storage[pba].hash);
         exit(EXIT_FAILURE); // 離開
     }
+    // d->storage[pba].status = status_trimed; // 測試
     d->storage[pba].status = status_invalid; // 刪除後把status改成status_invalid
 #ifndef TOP_BUFFER
     bool valid = d->ltp_table_head->table[lba].valid; // 檢查原本ltp對應關西的那個entry是不是true
