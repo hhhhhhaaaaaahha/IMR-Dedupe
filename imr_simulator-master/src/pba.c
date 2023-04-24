@@ -592,7 +592,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 #else
     if (DEDU_is_lba_valid(d, lba, hash, &pba))
     {
-        return pba;
+        return pba; // 若是照我的想法來改的話（DEDU_Trim 的 lba.valid 更動），這裡也要檢查 is_trimed
     }
 #endif
 
