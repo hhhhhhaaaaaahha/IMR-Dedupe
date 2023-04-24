@@ -144,94 +144,26 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: nodeduperun dedupeoriginrun#deleterun trimrun ray_deleterun ray_trimrun
+run: nodeduperun dedupeoriginrun # deleterun trimrun
 
-test_delete:
-	./bin/dedupewrite -d -i trace/test.csv -o report/test.txt -s 1 -l 1
+nodeduperun: bin/nodedupe
+	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test.txt -s 519 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000_2.csv -o report/nodedupe-test_2.txt -s 425 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000_origin.csv -o report/nodedupe-test_origin.txt -s 425 -l 700
+
+dedupeoriginrun: bin/dedupeorigin
+	./bin/dedupeorigin -d -i ../trace/user000.csv -o report/dedupeorigin-test.txt -s 425 -l 700
+	./bin/dedupeorigin -d -i ../trace/user000_2.csv -o report/dedupeorigin-test_2.txt -s 425 -l 700
+	./bin/dedupeorigin -d -i ../trace/user000_origin.csv -o report/dedupeorigin-test_origin.txt -s 425 -l 700
 
 deleterun: bin/dedupewrite
 	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_425.txt -s 425 -l 425
 	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_488.txt -s 488 -l 425
-	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_781.txt -s 781 -l 425
-	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_848.txt -s 848 -l 425
-	./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_685.txt -s 685 -l 1096
-	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_1096.txt -s 1096 -l 1096
-	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_2191.txt -s 2191 -l 1096
-
-	# ./bin/dedupewrite -d -i ../trace/normal/30.csv -o report/deleterun-normal_30_266.txt -s 266 -l 2048
-	# ./bin/dedupewrite -d -i ../trace/normal/test_deletion.csv -o report/deleterun-test.txt -s 400 -l 2048
-	
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/deleterun-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion/huge_deletion.csv -o report/deleterun-huge_deletion_600.txt -s 600 -l 2048
-	# ./bin/dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/deleterun-normal_deletion_30.txt -s 850 -l 2048
 	
 trimrun: bin/trim
 	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_425.txt -s 425 -l 425
 	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_488.txt -s 488 -l 425
-	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_781.txt -s 781 -l 425
-	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_848.txt -s 848 -l 425
-	./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_685.txt -s 685 -l 1096
-	# ./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_1096.txt -s 1096 -l 1096
-	# ./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_2191.txt -s 2191 -l 1096
 
-	# ./bin/trim -d -i ../trace/normal/30.csv -o report/trim-normal_30_266.txt -s 266 -l 2048
-	# ./bin/trim -d -i ../trace/normal/test_deletion.csv -o report/trim-test.txt -s 400 -l 2048
-	
-	# ./bin/trim -d -i ../trace/normal_deletion/30.csv -o report/trim-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/trim -d -i ../trace/normal_deletion/huge_deletion.csv -o report/trim-huge_deletion_600.txt -s 600 -l 2048
-	# ./bin/trim -d -i ../trace/normal_deletion/30.csv -o report/trim-normal_deletion_30.txt -s 850 -l 2048
-
-ray_deleterun: bin/ray_dedupewrite
-	# ./bin/ray_dedupewrite -d -i ../trace/normal/30.csv -o report/ray_deleterun-normal_30_266.txt -s 266 -l 2048
-	
-	# ./bin/ray_dedupewrite -d -i ../trace/user000.csv -o report/ray_deleterun-user000_425.txt -s 425 -l 425
-	./bin/ray_dedupewrite -d -i ../trace/user002.csv -o report/ray_dedupewrite-user002_685.txt -s 685 -l 1096
-	# ./bin/ray_dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/ray_deleterun-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/ray_dedupewrite -d -i ../trace/normal/test_deletion.csv -o report/ray_deleterun-test.txt -s 400 -l 2048
-	# ./bin/ray_dedupewrite -d -i ../trace/normal_deletion/huge_deletion.csv -o report/ray_deleterun-huge_deletion_600.txt -s 600 -l 2048
-
-ray_trimrun: bin/ray_trim
-	# ./bin/ray_trim -d -i ../trace/normal/30.csv -o report/ray_trim-normal_30_266.txt -s 266 -l 2048
-	
-	# ./bin/ray_trim -d -i ../trace/user000.csv -o report/ray_trim-user000_425.txt -s 425 -l 425
-	./bin/ray_trim -d -i ../trace/user002.csv -o report/ray_trim-user002_685.txt -s 685 -l 1096
-	# ./bin/ray_trim -d -i ../trace/normal_deletion/30.csv -o report/ray_trim-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/ray_trim -d -i ../trace/normal/test_deletion.csv -o report/ray_trim-test.txt -s 400 -l 2048
-	# ./bin/ray_trim -d -i ../trace/normal_deletion/huge_deletion.csv -o report/ray_trim-huge_deletion_600.txt -s 600 -l 2048
-
-adjusted_deleterun: bin/adjusted_dedupewrite
-	# ./bin/adjusted_dedupewrite -d -i ../trace/normal/30.csv -o report/adjusted_deleterun-normal_30_266.txt -s 266 -l 2048
-	
-	# ./bin/adjusted_dedupewrite -d -i ../trace/user000.csv -o report/adjusted_deleterun-user000_425.txt -s 425 -l 425
-	# ./bin/adjusted_dedupewrite -d -i ../trace/normal_deletion/30.csv -o report/adjusted_deleterun-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/adjusted_dedupewrite -d -i ../trace/normal_deletion/huge_deletion.csv -o report/adjusted_deleterun-huge_deletion_600.txt -s 600 -l 2048
-
-adjusted_trimrun: bin/adjusted_trim
-	# ./bin/adjusted_trim -d -i ../trace/normal/30.csv -o report/adjusted_trim-normal_30_266.txt -s 266 -l 2048
-	
-	# ./bin/adjusted_trim -d -i ../trace/user000.csv -o report/adjusted_trim-user000_425.txt -s 425 -l 425
-	# ./bin/adjusted_trim -d -i ../trace/normal_deletion/30.csv -o report/adjusted_trim-normal_deletion_30_300.txt -s 300 -l 2048
-	# ./bin/adjusted_trim -d -i ../trace/normal_deletion/huge_deletion.csv -o report/adjusted_trim-huge_deletion_600.txt -s 600 -l 2048
-
-nodeduperun: bin/nodedupe
-	./bin/nodedupe -d 1 -i ../trace/user000.csv -o report/nodedupe-test.txt -s 519 -l 700
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_425.txt -s 425 -l 425
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_488.txt -s 488 -l 425
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_781.txt -s 781 -l 425
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/nodedupe-user000_128kb_h_1_848.txt -s 848 -l 425
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/nodedupe-user002_128kb_lba_t1_half_1_685.txt -s 685 -l 1096
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/nodedupe-user002_128kb_lba_t1_half_1_1096.txt -s 1096 -l 1096
-	# ./bin/nodedupe -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/nodedupe-user002_128kb_lba_t1_half_1_2191.txt -s 2191 -l 1096
-
-dedupeoriginrun: bin/dedupeorigin
-	# ./bin/dedupeorigin -d 1 -i ../trace/user000.csv -o report/dedupeorigin-test.txt -s 425 -l 600
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_425.txt -s 425 -l 425
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_488.txt -s 488 -l 425
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_781.txt -s 781 -l 425
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupeorigin-user000_128kb_h_1_848.txt -s 848 -l 425
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/dedupeorigin-user002_128kb_lba_t1_half_1_685.txt -s 685 -l 1096
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/dedupeorigin-user002_128kb_lba_t1_half_1_1096.txt -s 1096 -l 1096
-	# ./bin/dedupeorigin -d 1 -i dedupe/normal/user002_128kb_lba_t1_half_1.csv -o report/dedupeorigin-user002_128kb_lba_t1_half_1_2191.txt -s 2191 -l 1096
 
 dedurun: bin/dedupewrite
 	# ./bin/dedupewrite -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupewrite-user000_128kb_h_1_425.txt -s 425 -l 425
