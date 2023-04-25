@@ -6,6 +6,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
     struct report *report = &d->report;
     unsigned long num_of_use_block;
     char line[MAX_LENS + 1];
+    int line_cnt = 1;
     while ((fgets(line, sizeof(line), stream)) != NULL)
     {
         int operation;
@@ -25,7 +26,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         {
         case 2:
             report->write_ins_count++;
-            d->d_op->DEDU_write(d, lba, num_of_use_block, hash);
+            d->d_op->DEDU_write(d, lba, num_of_use_block, hash, line_cnt);
             break;
         case 3:
             report->delete_ins_count++;
@@ -38,6 +39,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
             exit(EXIT_FAILURE);
             break;
         }
+        line_cnt += 1;
     }
     printf("block size = %ld\n", BLOCK_SIZE);
 }

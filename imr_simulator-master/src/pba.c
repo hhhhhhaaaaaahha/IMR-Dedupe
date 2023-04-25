@@ -579,10 +579,15 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
     // 以下 flow control 為判斷：如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
-        DEDU_update_ltp_table(d, lba, pba, hash);
 #ifndef NO_DEDU
+        if (strcmp(hash, d->storage[pba].hash) != 0)
+        {
+            bool temp = is_in_storage(d, hash, &pba);
+        }
         d->storage[pba].referenced_count++;
 #endif
+        DEDU_update_ltp_table(d, lba, pba, hash);
+
         return pba;
     }
 #ifdef DEDU_WRITE
@@ -610,8 +615,8 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
         return pba;
     }
 #endif
-    pba = DEDU_find_next_pba(d, lba, hash);   // 透過find_next_pba_jfs這個function來找到對應的pba
-    DEDU_update_ltp_table(d, lba, pba, hash); // 再透過update_ltp_table去更新lba,pba,fid的對應關西
-    return pba;                               // 最後把pba return
+    pba = DEDU_find_next_pba(d, lba, hash);
+    DEDU_update_ltp_table(d, lba, pba, hash);
+    return pba;
 }
 #endif

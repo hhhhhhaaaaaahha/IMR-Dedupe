@@ -223,7 +223,7 @@ struct disk_operations
     int (*remove)(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
     int (*journaling_write)(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
     int (*invalid)(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
-    int (*DEDU_write)(struct disk *d, unsigned long lba, size_t n, char *hash);
+    int (*DEDU_write)(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
     void (*DEDU_remove)(struct disk *d, unsigned long lba, size_t n, char *hash);
 };
 
@@ -279,7 +279,7 @@ int lba_invalid(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
 int vg_lba_delete(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
 #ifdef DEDU_ORIGIN
 bool DEDU_is_ltp_mapping_valid(struct disk *d, unsigned long lba, char *hash);
-int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash);
+int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
 void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash);
 void delete_all_bottom_track(struct disk *d);
 #endif

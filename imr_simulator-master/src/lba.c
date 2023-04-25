@@ -567,7 +567,7 @@ bool is_lba_in_storage(struct disk *d, unsigned long pba, unsigned long lba)
     return false;
 }
 
-int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash)
+int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt)
 {
     size_t num_invalid = 0;
     struct report *report = &d->report;
@@ -603,6 +603,7 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash)
         {
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
+                fprintf(stderr, "line:%d\n", line_cnt);
                 fprintf(stderr, "%s will be write\n", hash);
                 fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
                 fprintf(stderr, "lba = %lu\n", lba);

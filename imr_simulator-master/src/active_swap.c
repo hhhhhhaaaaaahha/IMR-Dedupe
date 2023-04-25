@@ -48,6 +48,7 @@ void DEDU_createBlockSwap(struct disk *d, unsigned long from, unsigned long to)
 {
     d->report.current_block_swap_count++;
     rw_block(d, from, to); // 是否可以調整?
+    // 把 block 中記錄的所有 lba 讀取出來，並且到 ltp_table 中將他們的 pba 換成新的
     ltp_table_swap(d, from, to);
     block_info_swap(d, to, from);
 }
