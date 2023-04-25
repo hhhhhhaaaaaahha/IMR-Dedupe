@@ -683,7 +683,6 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
         unsigned long pba = lba_to_pba(d, lba);
         assert(d->storage[pba].status == status_in_use);
 
-#ifndef NO_DEDU
         bool is_sucess_delete_lba_in_storage = delete_lba_in_storage(d, pba, lba);
         if (!is_sucess_delete_lba_in_storage)
         {
@@ -695,12 +694,10 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
             }
             exit(EXIT_FAILURE);
         }
-#endif
 
         if (d->storage[pba].referenced_count > 0)
         {
             d->storage[pba].referenced_count--;
-            // entry[lba].valid = false;
         }
         else
         {

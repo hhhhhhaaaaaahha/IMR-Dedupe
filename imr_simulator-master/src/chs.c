@@ -31,10 +31,12 @@ void chs_write(struct disk *d, unsigned long pba)
 #endif
     }
 #ifdef NO_DEDU
-    if (d->storage[pba].count < 0)
+    if (d->storage[pba].count == 0)
     {
         d->storage[pba].count++; // d->storage[pba].count+1，count是為了記錄使用次數
     }
+#else
+    d->storage[pba].count++;                 // d->storage[pba].count+1，count是為了記錄使用次數
 #endif
 }
 

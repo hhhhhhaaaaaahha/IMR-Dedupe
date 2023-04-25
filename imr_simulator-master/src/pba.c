@@ -585,7 +585,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
         return pba;
     }
 #else
-#ifdef NO_DEDU
+
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
         DEDU_update_ltp_table(d, lba, pba, hash);
@@ -595,17 +595,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
     {
         return pba;
     }
-#else
-    if (DEDU_is_lba_trimed(d, lba, hash, &pba))
-    {
-        DEDU_update_ltp_table(d, lba, pba, hash);
-        return pba; // 若是照我的想法來改的話（DEDU_Trim 的 lba.valid 更動），這裡也要檢查 is_trimed
-    }
-    if (DEDU_is_lba_valid(d, lba, hash, &pba))
-    {
-        return pba;
-    }
-#endif
+
 #endif
 
 #ifndef NO_DEDU
