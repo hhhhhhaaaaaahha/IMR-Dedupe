@@ -147,7 +147,7 @@ DISKSIZE = 1100
 run: nodeduperun dedupeoriginrun # deleterun trimrun
 
 nodeduperun: bin/nodedupe
-	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test.txt -s 519 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test.txt -s 425 -l 700
 	# ./bin/nodedupe -d -i ../trace/user000_2.csv -o report/nodedupe-test_2.txt -s 425 -l 700
 	# ./bin/nodedupe -d -i ../trace/user000_origin.csv -o report/nodedupe-test_origin.txt -s 425 -l 700
 

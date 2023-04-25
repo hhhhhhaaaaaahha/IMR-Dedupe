@@ -451,10 +451,8 @@ bool DEDU_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned 
 {
     unsigned long pba = lba_to_pba(d, lba);
     *p = pba;
-    if (DEDU_is_ltp_mapping_valid(d, lba, hash) && d->ltp_table_head->table[lba].trim)
+    if (d->ltp_table_head->table[lba].trim)
         return true;
-    // if (d->ltp_table_head->table[lba].trim)
-    //     return true;
     return false;
 }
 // 檢查lba是不是valid，如果是valid的話透過*p來接找到的pba
@@ -578,22 +576,36 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
 unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 {
     unsigned long pba;
-#ifndef NO_DEDU
+#ifdef DEDU_WRITE
+    // 如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) || DEDU_is_lba_valid(d, lba, hash, &pba))
     // if (DEDU_is_lba_valid(d, lba, hash, &pba)) // 改
     {
-        // printf("pba=%ld\n", pba);
-#ifdef DEDU_WRITE
-
         pba = DEDU_update(d, lba, pba, hash);
-#endif
         return pba;
     }
 #else
-    if (DEDU_is_lba_valid(d, lba, hash, &pba))
+#ifdef NO_DEDU
+    if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
+        DEDU_update_ltp_table(d, lba, pba, hash);
+        return pba;
+    }
+    else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
+    {
+        return pba;
+    }
+#else
+    if (DEDU_is_lba_trimed(d, lba, hash, &pba))
+    {
+        DEDU_update_ltp_table(d, lba, pba, hash);
         return pba; // 若是照我的想法來改的話（DEDU_Trim 的 lba.valid 更動），這裡也要檢查 is_trimed
     }
+    if (DEDU_is_lba_valid(d, lba, hash, &pba))
+    {
+        return pba;
+    }
+#endif
 #endif
 
 #ifndef NO_DEDU

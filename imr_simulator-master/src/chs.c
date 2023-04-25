@@ -30,7 +30,12 @@ void chs_write(struct disk *d, unsigned long pba)
         vg->size++;
 #endif
     }
-    d->storage[pba].count++; // d->storage[pba].count+1，count是為了記錄使用次數
+#ifdef NO_DEDU
+    if (d->storage[pba].count < 0)
+    {
+        d->storage[pba].count++; // d->storage[pba].count+1，count是為了記錄使用次數
+    }
+#endif
 }
 
 void chs_delete(struct disk *d, unsigned long pba)
@@ -44,8 +49,11 @@ void chs_delete(struct disk *d, unsigned long pba)
         fprintf(stderr, "%s\n", d->storage[pba].hash);
         exit(EXIT_FAILURE); // 離開
     }
-    // d->storage[pba].status = status_trimed; // 測試
+#if defined(NO_DEDUPE) || defined(BLOCK_SWAP)
+    d->storage[pba].status = status_trimed;
+#else
     d->storage[pba].status = status_invalid; // 刪除後把status改成status_invalid
+#endif
 #ifndef TOP_BUFFER
     bool valid = d->ltp_table_head->table[lba].valid; // 檢查原本ltp對應關西的那個entry是不是true
     assert(valid == true);                            // 如果不是的話就跳出
