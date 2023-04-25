@@ -18,7 +18,7 @@ TETFLAGS = src/lba.c src/active_swap.c src/parse.c src/top_buffer.c src/scp.c sr
 .PHONY: clean dirs valgrind dedupe_write cmr nodedupe dedupeorigin trim gtest
 # zalloc topbuffer blockswap vg blockswap_virtual
 # all:gtest
-all: nodedupe dedupeorigin # dedupe_write trim ray_dedupe_write ray_trim
+all: nodedupe dedupeorigin dedupe_write trim
 
 gtest:
 	$(CXX) $(CPPFLAGS) -DDEDU_WRITE test/ut_main.cpp -o bin/ut_all $(GTESTGLAGS) $(LDFLAGS) $(TETFLAGS)
@@ -144,12 +144,12 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: nodeduperun dedupeoriginrun # deleterun trimrun
+run: nodeduperun dedupeoriginrun deleterun trimrun
 
 nodeduperun: bin/nodedupe
-	./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test_compare.txt -s 425 -l 700
-	./bin/nodedupe -d -i ../trace/user000_2.csv -o report/nodedupe-test_compare_2.txt -s 425 -l 700
-	./bin/nodedupe -d -i ../trace/user000_origin.csv -o report/nodedupe-test_compare_origin.txt -s 425 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test.txt -s 425 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000_2.csv -o report/nodedupe-test_2.txt -s 425 -l 700
+	# ./bin/nodedupe -d -i ../trace/user000_origin.csv -o report/nodedupe-test_origin.txt -s 425 -l 700
 
 dedupeoriginrun: bin/dedupeorigin
 	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/dedupeorigin-test.txt -s 425 -l 700
@@ -157,8 +157,10 @@ dedupeoriginrun: bin/dedupeorigin
 	# ./bin/dedupeorigin -d -i ../trace/user000_origin.csv -o report/dedupeorigin-test_origin.txt -s 425 -l 700
 
 deleterun: bin/dedupewrite
-	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_425.txt -s 425 -l 425
-	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-user000_488.txt -s 488 -l 425
+	./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-test.txt -s 425 -l 700
+	./bin/dedupewrite -d -i ../trace/user000_2.csv -o report/deleterun-test_2.txt -s 425 -l 700
+	./bin/dedupewrite -d -i ../trace/user000_origin.csv -o report/deleterun-test_origin.txt -s 425 -l 700
+	
 	
 trimrun: bin/trim
 	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_425.txt -s 425 -l 425

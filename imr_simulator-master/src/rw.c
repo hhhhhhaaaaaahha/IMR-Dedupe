@@ -2,7 +2,7 @@
 #include "record_op.h"
 #include "pba.h"
 
-void rw_block(struct disk *d, unsigned long from, unsigned long to)
+void rw_block(struct disk *d, unsigned long from, unsigned long to) // from: tba, to: bba
 {
     // reread
     batch_add(d, from, &mbtable);

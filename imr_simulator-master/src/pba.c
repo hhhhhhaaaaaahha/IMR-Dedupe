@@ -576,21 +576,22 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
 unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 {
     unsigned long pba;
+    // 以下 flow control 為判斷：如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
+    if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
+    {
+        DEDU_update_ltp_table(d, lba, pba, hash);
+#ifndef NO_DEDU
+        d->storage[pba].referenced_count++;
+#endif
+        return pba;
+    }
 #ifdef DEDU_WRITE
-    // 如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
-    if (DEDU_is_lba_trimed(d, lba, hash, &pba) || DEDU_is_lba_valid(d, lba, hash, &pba))
-    // if (DEDU_is_lba_valid(d, lba, hash, &pba)) // 改
+    else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
         pba = DEDU_update(d, lba, pba, hash);
         return pba;
     }
 #else
-
-    if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
-    {
-        DEDU_update_ltp_table(d, lba, pba, hash);
-        return pba;
-    }
     else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
         return pba;
@@ -599,8 +600,9 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 #endif
 
 #ifndef NO_DEDU
+    // 檢查 hash 是否已存在於 disk，是的話就將 pba 設為該 block
     bool is_in_storage_flag = is_in_storage(d, hash, &pba);
-    bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);
+    bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash); // 檢查 ltp_entry 是否 valid
     if (is_in_storage_flag && !is_ltp_mapping_flag)
     {
         DEDU_update_ltp_table(d, lba, pba, hash);
