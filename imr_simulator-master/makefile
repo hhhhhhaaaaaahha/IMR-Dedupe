@@ -18,7 +18,7 @@ TETFLAGS = src/lba.c src/active_swap.c src/parse.c src/top_buffer.c src/scp.c sr
 .PHONY: clean dirs valgrind dedupe_write cmr nodedupe dedupeorigin trim gtest
 # zalloc topbuffer blockswap vg blockswap_virtual
 # all:gtest
-all: nodedupe dedupeorigin dedupe_write trim
+all:  trim_v2 #nodedupe dedupeorigin dedupe_write trim
 
 gtest:
 	$(CXX) $(CPPFLAGS) -DDEDU_WRITE test/ut_main.cpp -o bin/ut_all $(GTESTGLAGS) $(LDFLAGS) $(TETFLAGS)
@@ -35,17 +35,10 @@ dedupe_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
-ray_dedupe_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE test/main.c -o bin/ray_dedupewrite $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+trim_v2: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/trim_v2 $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
-ray_trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/ray_trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
-adjusted_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE test/main.c -o bin/adjusted_dedupewrite $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
-
-adjusted_trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/adjusted_trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
 cmr: $(OBJS) dirs
 	$(CC) $(CFLAGS) $(LDFLAGS) -DCMR test/main.c -o bin/cmr $(OBJS)
@@ -144,28 +137,46 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: nodeduperun dedupeoriginrun deleterun trimrun
+run: nodeduperun dedupeoriginrun deleterun trimrun trimv2run
 
 nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/nodedupe-test.txt -s 425 -l 700
 	# ./bin/nodedupe -d -i ../trace/user000_2.csv -o report/nodedupe-test_2.txt -s 425 -l 700
 	# ./bin/nodedupe -d -i ../trace/user000_origin.csv -o report/nodedupe-test_origin.txt -s 425 -l 700
 
+	# ./bin/nodedupe -d -i ../trace/user002.csv -o report/nodedupe-user002.txt -s 1096 -l 2000
+
 dedupeoriginrun: bin/dedupeorigin
 	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/dedupeorigin-test.txt -s 425 -l 700
 	# ./bin/dedupeorigin -d -i ../trace/user000_2.csv -o report/dedupeorigin-test_2.txt -s 425 -l 700
 	# ./bin/dedupeorigin -d -i ../trace/user000_origin.csv -o report/dedupeorigin-test_origin.txt -s 425 -l 700
 
-deleterun: bin/dedupewrite
-	./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-test.txt -s 425 -l 700
-	./bin/dedupewrite -d -i ../trace/user000_2.csv -o report/deleterun-test_2.txt -s 425 -l 700
-	./bin/dedupewrite -d -i ../trace/user000_origin.csv -o report/deleterun-test_origin.txt -s 425 -l 700
-	
-	
-trimrun: bin/trim
-	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_425.txt -s 425 -l 425
-	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-user000_488.txt -s 488 -l 425
+	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/dedupeorigin-user002.txt -s 1096 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/dedupeorigin-user002_700.txt -s 700 -l 2000
 
+deleterun: bin/dedupewrite
+	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/deleterun-test.txt -s 425 -l 700
+	# ./bin/dedupewrite -d -i ../trace/user000_2.csv -o report/deleterun-test_2.txt -s 425 -l 700
+	# ./bin/dedupewrite -d -i ../trace/user000_origin.csv -o report/deleterun-test_origin.txt -s 425 -l 700
+	
+	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002.txt -s 1096 -l 2000
+	./bin/dedupewrite -d -i ../trace/user002.csv -o report/deleterun-user002_700.txt -s 700 -l 2000
+
+trimrun: bin/trim
+	# ./bin/trim -d -i ../trace/user000.csv -o report/trim-test.txt -s 425 -l 700
+	# ./bin/trim -d -i ../trace/user000_2.csv -o report/trim-test_2.txt -s 425 -l 700
+	# ./bin/trim -d -i ../trace/user000_origin.csv -o report/trim-test_origin.txt -s 425 -l 700
+
+	# ./bin/trim -d -i ../trace/user002.csv -o report/trim-user002.txt -s 1096 -l 2000
+	./bin/trim -d -i ../trace/user002.csv -o report/trim-user002_700.txt -s 700 -l 2000
+
+trimv2run: bin/trim_v2
+	# ./bin/trim_v2 -d -i ../trace/user000.csv -o report/trim_v2-test.txt -s 425 -l 700
+	# ./bin/trim_v2 -d -i ../trace/user000_2.csv -o report/trim_v2-test_2.txt -s 425 -l 700
+	# ./bin/trim_v2 -d -i ../trace/user000_origin.csv -o report/trim_v2-test_origin.txt -s 425 -l 700
+
+	# ./bin/trim_v2 -d -i ../trace/user002.csv -o report/trim_v2-user002.txt -s 1096 -l 2000
+	./bin/trim_v2 -d -i ../trace/user002.csv -o report/trim_v2-user002_700.txt -s 700 -l 2000
 
 dedurun: bin/dedupewrite
 	# ./bin/dedupewrite -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupewrite-user000_128kb_h_1_425.txt -s 425 -l 425

@@ -550,6 +550,40 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
 #endif
 }
 #endif
+
+#ifdef ZALLOC
+unsigned long find_swapped_pba(struct disk *d, char *hash, unsigned long pba)
+{
+    zalloc_phases phase = d->zinfo.phases;
+    uint64_t phase1_total_block_num = (d->report.max_track_num % 2 == 0) ? (d->report.max_track_num / 2) : (d->report.max_track_num / 2 + 1);
+    if (phase == zalloc_phase1)
+    {
+        for (size_t i = d->zinfo.phase1_start, num = 0; num < phase1_total_block_num && num < d->report.current_use_block_num; i += 2, num++)
+        {
+            if (d->storage[i].status != status_in_use)
+                continue;
+            if (strcmp(d->storage[i].hash, hash) == 0)
+            {
+                return i;
+            }
+        }
+    }
+    else
+    {
+        for (uint64_t i = 0; i < d->report.max_block_num; i++)
+        {
+            if (d->storage[i].status != status_in_use)
+                continue;
+            if (strcmp(d->storage[i].hash, hash) == 0)
+            {
+                return i;
+            }
+        }
+    }
+    return d->report.max_block_num + 100;
+}
+#endif
+
 unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, char *hash)
 {
     if (!is_toptrack(pba)) // 如果是 bottom track 的話
@@ -580,11 +614,17 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
 #ifndef NO_DEDU
+        // 檢查 lba 被刪除過後，該 lba 對應的 pba 是否有被 swap 過
         if (strcmp(hash, d->storage[pba].hash) != 0)
         {
-            bool temp = is_in_storage(d, hash, &pba);
+            // 重新定位 lba 對應的 pba
+            unsigned long temp = d->report.max_block_num;
+            temp = find_swapped_pba(d, hash, temp);
+            if (temp < d->report.max_block_num)
+            {
+                pba = temp;
+            }
         }
-        d->storage[pba].referenced_count++;
 #endif
         DEDU_update_ltp_table(d, lba, pba, hash);
 

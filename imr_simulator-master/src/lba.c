@@ -585,14 +585,8 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
     }
     for (size_t i = 0; i < n; i++)
     {
-        // if (d->storage[1].status == status_booked)
-        // {
-        //     printf("YESSSSSSSSS\n");
-        // }
         unsigned long pba;
-        // printf("lba=%ld\n", lba);
         pba = DEDU_pba_search(d, lba + i, hash);
-        // printf("------------------------------------------------\n");
         assert(pba < d->report.max_block_num);
 #ifdef NO_DEDU
         d->storage[pba].lba[0] = lba + i;
@@ -603,7 +597,6 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         {
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
-                fprintf(stderr, "line:%d\n", line_cnt);
                 fprintf(stderr, "%s will be write\n", hash);
                 fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
                 fprintf(stderr, "lba = %lu\n", lba);

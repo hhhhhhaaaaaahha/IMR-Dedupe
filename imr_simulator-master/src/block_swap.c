@@ -16,6 +16,10 @@ unsigned long find_empty_block_swap(struct disk *d)
     {
         if (d->ptt_table_head->table[i].type != normal_type)
             continue;
+        if (d->storage[i].status != status_in_use)
+        {
+            continue;
+        }
         if (d->storage[i].referenced_count > max_referced_count)
         {
             max_referced_count = d->storage[i].referenced_count;
