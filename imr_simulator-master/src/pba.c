@@ -512,8 +512,8 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
     {
         for (size_t i = d->zinfo.phase1_start, num = 0; num < phase1_total_block_num && num < d->report.current_use_block_num; i += 2, num++)
         {
-            if (d->storage[i].status != status_in_use)
-                continue;
+            // if (d->storage[i].status != status_in_use)
+            //     continue;
             if (strcmp(d->storage[i].hash, hash) == 0)
             {
                 *pba = i;
@@ -525,8 +525,8 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
     {
         for (uint64_t i = 0; i < d->report.max_block_num; i++)
         {
-            if (d->storage[i].status != status_in_use)
-                continue;
+            // if (d->storage[i].status != status_in_use)
+            //     continue;
             if (strcmp(d->storage[i].hash, hash) == 0)
             {
                 *pba = i;
@@ -552,7 +552,7 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
 #endif
 
 #ifdef ZALLOC
-unsigned long find_swapped_pba(struct disk *d, char *hash, unsigned long pba)
+unsigned long find_swapped_pba(struct disk *d, char *hash, unsigned long pba, int line_cnt)
 {
     zalloc_phases phase = d->zinfo.phases;
     uint64_t phase1_total_block_num = (d->report.max_track_num % 2 == 0) ? (d->report.max_track_num / 2) : (d->report.max_track_num / 2 + 1);
@@ -570,15 +570,27 @@ unsigned long find_swapped_pba(struct disk *d, char *hash, unsigned long pba)
     }
     else
     {
+        if (line_cnt == 677947)
+        {
+            printf("find_swapped_pba_called.\n");
+        }
         for (uint64_t i = 0; i < d->report.max_block_num; i++)
         {
             if (d->storage[i].status != status_in_use)
                 continue;
             if (strcmp(d->storage[i].hash, hash) == 0)
             {
+                if (line_cnt == 677947)
+                {
+                    printf("find_swapped_pba_successed.\n");
+                }
                 return i;
             }
         }
+    }
+    if (line_cnt == 677947)
+    {
+        printf("find_swapped_pba_failed.\n");
     }
     return d->report.max_block_num + 100;
 }
@@ -607,7 +619,7 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
     return pba;
 }
 
-unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
+unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int line_cnt)
 {
     unsigned long pba;
     // 以下 flow control 為判斷：如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
@@ -617,9 +629,13 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
         // 檢查 lba 被刪除過後，該 lba 對應的 pba 是否有被 swap 過
         if (strcmp(hash, d->storage[pba].hash) != 0)
         {
+            if (line_cnt == 677947)
+            {
+                printf("Check pba by hash.\n");
+            }
             // 重新定位 lba 對應的 pba
             unsigned long temp = d->report.max_block_num;
-            temp = find_swapped_pba(d, hash, temp);
+            temp = find_swapped_pba(d, hash, temp, line_cnt);
             if (temp < d->report.max_block_num)
             {
                 pba = temp;
@@ -645,13 +661,21 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash)
 #endif
 
 #ifndef NO_DEDU
+    // ltp_entry 沒有被 trim 也不是 valid 的情況：lba 第一次被寫入
     // 檢查 hash 是否已存在於 disk，是的話就將 pba 設為該 block
     bool is_in_storage_flag = is_in_storage(d, hash, &pba);
-    bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash); // 檢查 ltp_entry 是否 valid
+    // 檢查 ltp_entry 是否 valid
+    bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);
+
+    // lba 第一次被寫入
     if (is_in_storage_flag && !is_ltp_mapping_flag)
     {
         DEDU_update_ltp_table(d, lba, pba, hash);
-        d->storage[pba].referenced_count++;
+        // 檢查存在該 hash 的 pba 是否為 trimed，若不是，則 referenced_count++
+        if (d->storage[pba].status != status_trimed)
+        {
+            d->storage[pba].referenced_count++;
+        }
         return pba;
     }
 #endif

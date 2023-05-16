@@ -208,7 +208,11 @@ struct block
 
 static inline bool storage_is_free(struct disk *d, unsigned long pba)
 {
+#ifdef NO_DEDU
     return (d->storage[pba].status == status_invalid) || (d->storage[pba].status == status_free) || (d->storage[pba].status == status_trimed);
+#else
+    return (d->storage[pba].status == status_invalid) || (d->storage[pba].status == status_free);
+#endif
 }
 
 static inline bool storage_is_in_use(struct disk *d, unsigned long pba)

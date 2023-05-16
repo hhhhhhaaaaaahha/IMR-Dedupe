@@ -64,11 +64,13 @@ unsigned long find_unused_bottom_block(struct disk *d)
         }
         is_bottom_has_trimed_track = false;
     }
+#ifdef TRIM_V2
     for (uint64_t i = 0; i < max; i += 2) // 註解掉
     {
         if (d->storage[i].referenced_count == 0)
             return i;
     }
+#endif
     return -1;
 }
 bool is_top_should_be_swap(struct disk *d, unsigned long tba)

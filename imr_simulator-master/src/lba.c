@@ -586,7 +586,23 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
     for (size_t i = 0; i < n; i++)
     {
         unsigned long pba;
-        pba = DEDU_pba_search(d, lba + i, hash);
+        // if (line_cnt == 188347 || line_cnt == 8292)
+        // {
+        // printf("line: %d\n", line_cnt);
+        // printf("----------------------------------------------\n");
+        // printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
+        // printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
+        // printf("----------------------------------------------\n");
+        // }
+        pba = DEDU_pba_search(d, lba + i, hash, line_cnt);
+        // if (line_cnt == 188347 || line_cnt == 8292)
+        // {
+        // printf("line: %d\n", line_cnt);
+        // printf("----------------------------------------------\n");
+        // printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
+        // printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
+        // printf("----------------------------------------------\n");
+        // }
         assert(pba < d->report.max_block_num);
 #ifdef NO_DEDU
         d->storage[pba].lba[0] = lba + i;
@@ -597,6 +613,14 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         {
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
+                // if (line_cnt == 677947)
+                // {
+                //     printf("line: 677947\n");
+                //     printf("---------------------------------\n");
+                //     printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
+                //     printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
+                //     printf("---------------------------------\n");
+                // }
                 fprintf(stderr, "%s will be write\n", hash);
                 fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
                 fprintf(stderr, "lba = %lu\n", lba);
