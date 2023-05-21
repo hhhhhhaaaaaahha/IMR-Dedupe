@@ -1,0 +1,57 @@
+Init disk...
+Init disk [OK]
+Parse instructions...
+
+Phase2!
+
+Phase3!
+
+Phase4!
+Parse instructions [OK]
+
+-------------------------
+Time information:
+
+15.000000 seconds total
+-------------------------
+Disk information:
+
+Size of disk = 88 GB
+-------------------------
+Transaction information:
+
+Total number of instructions        =           525000 instructions
+Total number of read instructions   =                0 instructions
+Total number of write instructions  =           500000 instructions
+Total number of delete instructions  =            25000 instructions
+Total number of invalid read        =                0 blocks
+Total number of invalid write       =                0 blocks
+Total size of read instructions   =                0 MB
+Total size of write instructions  =             1953 MB
+
+Total block swap count      =                 121 blocks
+Total inversion swap count      =                   0 blocks
+#########################
+######## Latency ########
+#########################
+Secure Deletion Latency     =                   0 ns
+Data Write Latency          =      27113674369944 ns
+Data Read Latency           =          3602567122 ns
+#########################
+######### Size ##########
+#########################
+Accumulated Write Size      =        702275387392 B
+Accumulated Rewrite Size    =        373127380992 B
+Accumulated Reread Size     =        567594188800 B
+#########################
+Secure Deletion:
+Accumulated Write Size      =                   0 B
+Accumulated Rewrite Size    =                   0 B
+Accumulated Reread Size     =                   0 B
+#########################
+Total Write Block Size      =        702275387392 B
+Total Read Block Size       =           253755392 B
+Total Delete Block Size     =                   0 B
+#########################
+Storage usage               =               79.17  %
+End
