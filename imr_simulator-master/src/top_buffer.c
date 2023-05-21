@@ -3,6 +3,7 @@
 #include "batch.h"
 #include "chs.h"
 #include "lba.h"
+#include "output.h"
 #include "scp.h"
 
 // Start from the end of journaling area top track
@@ -78,7 +79,9 @@ unsigned long run_top_buffer(struct disk *d, unsigned long bba)
 #ifdef TOP_BUFFER
     if (is_top_buffer_full(d))
     {
-        scp(d);
+        tba = scp(d);
+        create_top_buffer(d, bba, tba);
+        return tba;
     }
 #endif
     // 如果傳進來的pba對應到的tba的type不是normal_type的話
@@ -96,6 +99,9 @@ unsigned long run_top_buffer(struct disk *d, unsigned long bba)
         printf("max_top_buffer_num = %ld\n", d->report.max_top_buffer_num);
 #endif
         fprintf(stderr, "Error: can't find any free top block.\n");
+        output_disk_info(d);
+        output_ltp_table(d);
+        output_ptt_table(d);
         exit(EXIT_FAILURE);
     }
     create_top_buffer(d, bba, tba);

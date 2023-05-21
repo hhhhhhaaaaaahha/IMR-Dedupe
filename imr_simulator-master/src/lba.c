@@ -109,6 +109,7 @@ int init_disk(struct disk *disk, int physical_size, int logical_size)
 #ifdef TOP_BUFFER
     report->max_top_buffer_num = TOP_BUFFER_CAPACITY(report->max_block_num);
 #endif
+// 設定 report->block_swap_boundary 為除了 top buffer 以外沒有地方可以寫入時的情況
 #ifdef BLOCK_SWAP
     report->block_swap_boundary = report->max_block_num - report->max_top_buffer_num;
 #elif defined DEDU_WRITE
@@ -304,6 +305,7 @@ bool is_ltp_mapping_valid(struct disk *d, unsigned long lba, unsigned long fid)
 {
     struct ltp_entry *e = &d->ltp_table_head->table[lba];
     return ((e->valid) && e->fid == fid);
+    // return (e->valid);
 }
 // 檢查lba對應的physical block中的data是不是valid
 bool is_block_data_valid(struct disk *d, unsigned long lba, unsigned long fid)
@@ -586,23 +588,7 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
     for (size_t i = 0; i < n; i++)
     {
         unsigned long pba;
-        // if (line_cnt == 188347 || line_cnt == 8292)
-        // {
-        // printf("line: %d\n", line_cnt);
-        // printf("----------------------------------------------\n");
-        // printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
-        // printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
-        // printf("----------------------------------------------\n");
-        // }
         pba = DEDU_pba_search(d, lba + i, hash, line_cnt);
-        // if (line_cnt == 188347 || line_cnt == 8292)
-        // {
-        // printf("line: %d\n", line_cnt);
-        // printf("----------------------------------------------\n");
-        // printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
-        // printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
-        // printf("----------------------------------------------\n");
-        // }
         assert(pba < d->report.max_block_num);
 #ifdef NO_DEDU
         d->storage[pba].lba[0] = lba + i;
@@ -613,20 +599,13 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         {
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
-                // if (line_cnt == 677947)
-                // {
-                //     printf("line: 677947\n");
-                //     printf("---------------------------------\n");
-                //     printf("ltp_entry trim: %d, valid: %d\n", d->ltp_table_head->table[lba].trim, d->ltp_table_head->table[lba].valid);
-                //     printf("pba in ltp_entry: %ld\n", d->ltp_table_head->table[lba].pba);
-                //     printf("---------------------------------\n");
-                // }
                 fprintf(stderr, "%s will be write\n", hash);
                 fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
                 fprintf(stderr, "lba = %lu\n", lba);
                 fprintf(stderr, "pba = %lu\n", pba);
                 output_disk_info(d);
                 output_ltp_table(d);
+                output_ptt_table(d);
                 exit(EXIT_FAILURE);
             }
             unsigned referenced_count = d->storage[pba].referenced_count;

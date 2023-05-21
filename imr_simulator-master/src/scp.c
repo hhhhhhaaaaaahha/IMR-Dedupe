@@ -36,12 +36,12 @@ void end_scp()
     end_batch_table(&scp_bottom_mtable);
 }
 
-size_t scp(struct disk *d)
+unsigned long scp(struct disk *d)
 {
     unsigned track;
     size_t count = 0;
-    // 如果report.current_top_buffer_count == 0，代表沒有任何一個top buffer被使用
 #ifdef TOP_BUFFER
+    // 如果report.current_top_buffer_count == 0，代表沒有任何一個top buffer被使用
     if (d->report.current_top_buffer_count == 0)
     {
         fprintf(stderr, "Error: Doing scp but no top buffer block found.\n");
@@ -58,11 +58,14 @@ size_t scp(struct disk *d)
     count = run_scp(d, track);
     scp_mode = false;
 #ifdef TOP_BUFFER
-    d->report.total_read_scp_size += count * SECTOR_SIZE;
+    // d->report.total_read_scp_size += count * SECTOR_SIZE;
+    d->report.total_read_scp_size += SECTOR_SIZE;
     d->report.scp_count++;
 #endif
     return count;
 }
+
+// 尋找要被釋放空間的 top buffer
 unsigned long find_victim_track(struct disk *d)
 {
     for (unsigned long i = current_scp_track; i < d->report.max_track_num; i += 2)
@@ -83,7 +86,7 @@ unsigned long find_victim_track(struct disk *d)
     }
     return -1;
 }
-size_t run_scp(struct disk *d, unsigned long track)
+unsigned long run_scp(struct disk *d, unsigned long track)
 {
     unsigned long tba = track;
     struct ptt_entry *tba_entry = NULL;
@@ -118,7 +121,11 @@ size_t run_scp(struct disk *d, unsigned long track)
 #ifdef BLOCK_SWAP
         if (enable_block_swap)
         {
-            run_block_swap(d, bba);
+            unsigned long temp = run_block_swap(d, bba);
+            if ((signed)temp != -1)
+            {
+                tba = temp;
+            }
         }
 #endif
         count++;
@@ -136,5 +143,5 @@ size_t run_scp(struct disk *d, unsigned long track)
                 __FUNCTION__);
         exit(EXIT_FAILURE);
     }
-    return count;
+    return tba;
 }

@@ -20,6 +20,35 @@ void output_ltp_table(struct disk *d)
     }
     fclose(output);
 }
+void output_ptt_table(struct disk *d)
+{
+    FILE *output = fopen("output/ptt_table.csv", "w+");
+    struct ptt_entry *entry = d->ptt_table_head->table;
+    fprintf(output, "pba, tba, scp_pba, type\n");
+    for (uint64_t i = 0; i < d->report.max_block_num; i++)
+    {
+        fprintf(output, "%ld, %lu, %lu,", i, entry[i].tba, entry[i].scp_pba);
+        switch (entry[i].type)
+        {
+        case 0:
+            fprintf(output, " normal_type\n");
+            break;
+        case 1:
+            fprintf(output, " top_buffer_type\n");
+            break;
+        case 2:
+            fprintf(output, " buffered_type\n");
+            break;
+        case 3:
+            fprintf(output, " block_swap_type\n");
+            break;
+        case 4:
+            fprintf(output, " end_type\n");
+            break;
+        }
+    }
+    fclose(output);
+}
 void output_disk_info(struct disk *d)
 {
     FILE *output = fopen("output/block.csv", "w+");

@@ -1,4 +1,6 @@
 #include <assert.h>
+
+#include "active_swap.h"
 #include "batch.h"
 #include "chs.h"
 #include "lba.h"
@@ -41,6 +43,10 @@ unsigned long find_empty_block_swap(struct disk *d)
         unsigned long block = t;
         if (d->ptt_table_head->table[block].type != normal_type)
             continue;
+        if (d->storage[block].status != status_in_use)
+        {
+            continue;
+        }
         if (d->storage[block].count < count)
         {
             pba = block;
@@ -67,10 +73,11 @@ void createBlockSwap(struct disk *d, unsigned long bba, unsigned long tba)
     // fprintf(e, "%ld\n", bba);
     // fclose(e);
     d->report.current_block_swap_count++;
+
     assert(d->storage[tba].status == status_in_use);
     // assert(d->storage[tba].referenced_count > 0);
-    printf("tba = %ld\n", tba);
-    printf("bba = %ld\n", bba);
+    // printf("tba = %ld\n", tba);
+    // printf("bba = %ld\n", bba);
     // #ifdef TRIM
     //     if (d->storage[bba].status == status_trimed)
     //     {
@@ -92,12 +99,8 @@ void createBlockSwap(struct disk *d, unsigned long bba, unsigned long tba)
 unsigned long run_block_swap(struct disk *d, unsigned long bba)
 {
     unsigned long tba = find_empty_block_swap(d);
-#ifdef DEDU_WRITE
-    if (tba != -1)
-        createBlockSwap(d, bba, tba);
-#else
-    createBlockSwap(d, bba, tba);
-#endif
+    if ((signed)tba != -1)
+        DEDU_createBlockSwap(d, bba, tba);
     return tba;
 }
 

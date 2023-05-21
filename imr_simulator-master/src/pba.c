@@ -15,6 +15,7 @@
 #include "lba.h"
 #include "list.h"
 #include "op_mode.h"
+#include "output.h"
 #include "pba.h"
 #include "scp.h"
 #ifdef TOP_BUFFER
@@ -107,10 +108,15 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                 {
                     scp(d);
                     d->zinfo.current_track = current_scp_track;
+                    d->report.max_top_buffer_num--;
                     continue;
                 }
 #endif
+                printf("current top buffer count: %ld\n", d->report.current_top_buffer_count);
                 perror("Error: disk is full. Can't find next empty block.");
+                output_disk_info(d);
+                output_ltp_table(d);
+                output_ptt_table(d);
                 longjmp(env, 1);
 #endif
             }
@@ -187,7 +193,7 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                 continue;
         }
 #endif
-        if (storage_is_free(d, pba))
+        if (storage_is_free(d, pba) && d->ptt_table_head->table[pba].type == normal_type)
         {
             d->storage[pba].status = status_booked;
             return pba;
@@ -461,14 +467,14 @@ bool DEDU_is_lba_valid(struct disk *d, unsigned long lba, char *hash, unsigned l
     unsigned long pba = lba_to_pba(d, lba); // 透過lba_to_pba這個function來找到對應的pba
     *p = pba;                               // 把pba回傳給p
     /*
-    if判斷加上pba != 0 的原因是因為新的lba經過lba_to_pba的function的時候
-    pba都會得到0(預設值)，所以才加上這個判斷後續的lba都拿到pba = 0
+    (pba == status_in_use) && (ltp.valid == true) && (ltp.hash == hash)
     */
     if (is_storage_data_valid(d, pba) && DEDU_is_ltp_mapping_valid(d, lba, hash)) // 如果is_ltp_mapping_valid跟is_storage_data_valid這兩個function是true的話，這個function就return true
     {
 #ifdef TOP_BUFFER
         block_type_t type = d->ptt_table_head->table[pba].type;
-        unsigned long track = lba_to_track(pba);
+        unsigned long track = pba;
+        // unsigned long track = lba_to_track(pba);
         switch (type)
         {
         // 如果type是top buffer或者是block swap的話，把pba轉成對應的tba回傳給p
@@ -621,18 +627,19 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
 
 unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int line_cnt)
 {
+    // printf("line cnt= %d\n", line_cnt);
     unsigned long pba;
-    // 以下 flow control 為判斷：如果是被刪除的資料或是已經存在的資料，則進行更新（刪除的資料復原，存在的資料更新）
+    /*
+    以下 flow control 為判斷：
+    如果是被刪除的資料或是已經存在的資料，則進行特定操作
+    （刪除的資料復原，存在的資料更新）
+    */
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
 #ifndef NO_DEDU
         // 檢查 lba 被刪除過後，該 lba 對應的 pba 是否有被 swap 過
         if (strcmp(hash, d->storage[pba].hash) != 0)
         {
-            if (line_cnt == 677947)
-            {
-                printf("Check pba by hash.\n");
-            }
             // 重新定位 lba 對應的 pba
             unsigned long temp = d->report.max_block_num;
             temp = find_swapped_pba(d, hash, temp, line_cnt);
@@ -667,7 +674,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
     // 檢查 ltp_entry 是否 valid
     bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);
 
-    // lba 第一次被寫入
+    // lba 第一次被寫入，且 hash 值已存在於 pba 中
     if (is_in_storage_flag && !is_ltp_mapping_flag)
     {
         DEDU_update_ltp_table(d, lba, pba, hash);
@@ -679,6 +686,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
         return pba;
     }
 #endif
+    // lba 與 hash 皆第一次被寫入
     pba = DEDU_find_next_pba(d, lba, hash);
     DEDU_update_ltp_table(d, lba, pba, hash);
     return pba;

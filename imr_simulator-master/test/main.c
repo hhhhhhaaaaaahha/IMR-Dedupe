@@ -424,6 +424,7 @@ int main(int argc, char **argv)
 	// DEDU_createBlockSwap(&d, 0, 8);
 	// d.d_op->DEDU_write(&d, 4, 1, "fb:ed:91:2b:8d:86");
 	output_ltp_table(&d);
+	output_ptt_table(&d);
 	output_disk_info(&d);
 	end_disk(&d);
 	if (fp != NULL)
