@@ -8,7 +8,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-150.000000 seconds total
+123.000000 seconds total
 -------------------------
 Disk information:
 
@@ -26,31 +26,31 @@ Total size of read instructions   =                0 MB
 Total size of write instructions  =             1697 MB
 
 -------------------------
-Total write top buffer size =                 736 MB
-Total read scp size         =                 705 MB
-Total scp count             =              180493 times
+Total write top buffer size =                 734 MB
+Total read scp size         =                 702 MB
+Total scp count             =              179940 times
 Total block swap count      =                   0 blocks
 #########################
 ######## Latency ########
 #########################
-Secure Deletion Latency     =       5373868988026 ns
-Data Write Latency          =      19268838937594 ns
-Data Read Latency           =       5373868988026 ns
+Secure Deletion Latency     =       5357404363080 ns
+Data Write Latency          =      19405843074676 ns
+Data Read Latency           =       5357404363080 ns
 #########################
 ######### Size ##########
 #########################
-Accumulated Write Size      =       1251091677184 B
-Accumulated Rewrite Size    =         33122418688 B
-Accumulated Reread Size     =         49866080256 B
+Accumulated Write Size      =       1249931952128 B
+Accumulated Rewrite Size    =         36503027712 B
+Accumulated Reread Size     =         54943285248 B
 #########################
 Secure Deletion:
-Accumulated Write Size      =        378521255936 B
+Accumulated Write Size      =        377361530880 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =       1251091677184 B
-Total Read Block Size       =        378521255936 B
-Total Delete Block Size     =        378521255936 B
+Total Write Block Size      =       1249931952128 B
+Total Read Block Size       =        377361530880 B
+Total Delete Block Size     =        377361530880 B
 #########################
 Storage usage               =               48.01  %
 End

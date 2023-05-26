@@ -137,10 +137,11 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: dedupeoriginrun #deleterun trimrun trimv2run # nodeduperun
-# run:  deleterun trimrun #trimv2run # nodeduperun
+run: deleterun  trimrun trimv2run dedupeoriginrun # nodeduperun
 
 nodeduperun: bin/nodedupe
+	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/ray/user000/425/nodedupe-user000_425.txt -s 425 -l 2000
+	
 	# ./bin/nodedupe -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/nodedupe-normal_10_43.txt -s 43 -l 2000
 	# ./bin/nodedupe -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/nodedupe-normal_10_37.txt -s 37 -l 2000
 	
@@ -196,235 +197,343 @@ nodeduperun: bin/nodedupe
 
 	# ./bin/nodedupe -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/nodedupe-normal_100_850.txt -s 850 -l 2000
 	# ./bin/nodedupe -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/nodedupe-normal_100_785.txt -s 785 -l 2000
-dedupeoriginrun: bin/dedupeorigin
-	./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/test.txt -s 43 -l 2000
-	
+dedupeoriginrun: bin/dedupeorigin	
+	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/ray/user000/425/dedupeorigin-user000_425.txt -s 425 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/ray/user000/488/dedupeorigin-user000_488.txt -s 488 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/ray/user000/781/dedupeorigin-user000_781.txt -s 781 -l 2000
+
+	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/600/dedupeorigin-user002_600.txt -s 600 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/700/dedupeorigin-user002_700.txt -s 700 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/1096/dedupeorigin-user002_1096.txt -s 1096 -l 2000
+
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/dedupeorigin-normal_10_43.txt -s 43 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/dedupeorigin-normal_10_37.txt -s 37 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/dedupeorigin-normal_10_68.txt -s 68 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/63/dedupeorigin-normal_15_63.txt -s 63 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/55/dedupeorigin-normal_15_55.txt -s 55 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/102/dedupeorigin-normal_15_102.txt -s 102 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/78/dedupeorigin-normal_20_78.txt -s 78 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/88/dedupeorigin-normal_20_88.txt -s 88 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/138/dedupeorigin-normal_20_138.txt -s 138 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/100/dedupeorigin-normal_25_100.txt -s 100 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/110/dedupeorigin-normal_25_110.txt -s 110 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/178/dedupeorigin-normal_25_178.txt -s 178 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/280/dedupeorigin-normal_30_280.txt -s 280 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/250/dedupeorigin-normal_30_250.txt -s 250 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/450/dedupeorigin-normal_30_450.txt -s 450 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/150/dedupeorigin-normal_35_150.txt -s 150 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/170/dedupeorigin-normal_35_170.txt -s 170 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/270/dedupeorigin-normal_35_270.txt -s 270 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/275/dedupeorigin-normal_40_275.txt -s 275 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/235/dedupeorigin-normal_40_235.txt -s 235 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/430/dedupeorigin-normal_40_430.txt -s 430 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/242/dedupeorigin-normal_45_242.txt -s 242 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/211/dedupeorigin-normal_45_211.txt -s 211 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/380/dedupeorigin-normal_45_380.txt -s 380 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/245/dedupeorigin-normal_50_245.txt -s 245 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/285/dedupeorigin-normal_50_285.txt -s 285 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/455/dedupeorigin-normal_50_455.txt -s 455 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/340/dedupeorigin-normal_55_340.txt -s 340 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/298/dedupeorigin-normal_55_298.txt -s 298 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/525/dedupeorigin-normal_55_525.txt -s 525 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/340/dedupeorigin-normal_60_340.txt -s 340 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/385/dedupeorigin-normal_60_385.txt -s 385 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/610/dedupeorigin-normal_60_610.txt -s 610 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/445/dedupeorigin-normal_65_445.txt -s 445 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/385/dedupeorigin-normal_65_385.txt -s 385 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/695/dedupeorigin-normal_65_695.txt -s 695 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/450/dedupeorigin-normal_70_450.txt -s 450 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/800/dedupeorigin-normal_70_800.txt -s 800 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/570/dedupeorigin-normal_75_570.txt -s 570 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/500/dedupeorigin-normal_75_500.txt -s 500 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/915/dedupeorigin-normal_75_915.txt -s 915 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/550/dedupeorigin-normal_80_550.txt -s 550 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/470/dedupeorigin-normal_80_470.txt -s 470 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/880/dedupeorigin-normal_80_880.txt -s 880 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/550/dedupeorigin-normal_85_550.txt -s 550 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/635/dedupeorigin-normal_85_635.txt -s 635 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/1020/dedupeorigin-normal_85_1020.txt -s 1020 -l 2000
 	
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/760/dedupeorigin-normal_90_760.txt -s 760 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/670/dedupeorigin-normal_90_670.txt -s 670 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/1200/dedupeorigin-normal_90_1200.txt -s 1200 -l 2000
 
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/580/dedupeorigin-normal_95_580.txt -s 580 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/630/dedupeorigin-normal_95_630.txt -s 630 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/1030/dedupeorigin-normal_95_1030.txt -s 1030 -l 2000
 
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/dedupeorigin-normal_100_850.txt -s 850 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/dedupeorigin-normal_100_785.txt -s 785 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/1400/dedupeorigin-normal_100_1400.txt -s 1300 -l 2000
 
 deleterun: bin/dedupewrite
-	./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/deleterun-normal_10_43.txt -s 43 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/test.txt -s 68 -l 2000
+	
+	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/ray/user000/425/deleterun-user000_425.txt -s 425 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/ray/user000/488/deleterun-user000_488.txt -s 488 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000.csv -o report/ray/user000/781/deleterun-user000_781.txt -s 781 -l 2000
+
+	./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/600/deleterun-user002_600.txt -s 600 -l 2000
+	./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/700/deleterun-user002_700.txt -s 700 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/1096/deleterun-user002_1096.txt -s 1096 -l 2000
+
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/deleterun-normal_10_43.txt -s 43 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/deleterun-normal_10_37.txt -s 37 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/deleterun-normal_10_68.txt -s 68 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/63/deleterun-normal_15_63.txt -s 63 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/55/deleterun-normal_15_55.txt -s 55 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/102/deleterun-normal_15_102.txt -s 102 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/78/deleterun-normal_20_78.txt -s 78 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/88/deleterun-normal_20_88.txt -s 88 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/138/deleterun-normal_20_138.txt -s 138 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/100/deleterun-normal_25_100.txt -s 100 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/110/deleterun-normal_25_110.txt -s 110 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/178/deleterun-normal_25_178.txt -s 178 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/280/deleterun-normal_30_280.txt -s 280 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/250/deleterun-normal_30_250.txt -s 250 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/450/deleterun-normal_30_450.txt -s 450 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/150/deleterun-normal_35_150.txt -s 150 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/170/deleterun-normal_35_170.txt -s 170 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/270/deleterun-normal_35_270.txt -s 270 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/275/deleterun-normal_40_275.txt -s 275 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/235/deleterun-normal_40_235.txt -s 235 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/430/deleterun-normal_40_430.txt -s 430 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/242/deleterun-normal_45_242.txt -s 242 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/211/deleterun-normal_45_211.txt -s 211 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/380/deleterun-normal_45_380.txt -s 380 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/245/deleterun-normal_50_245.txt -s 245 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/285/deleterun-normal_50_285.txt -s 285 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/455/deleterun-normal_50_455.txt -s 455 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/340/deleterun-normal_55_340.txt -s 340 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/298/deleterun-normal_55_298.txt -s 298 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/525/deleterun-normal_55_525.txt -s 525 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/340/deleterun-normal_60_340.txt -s 340 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/385/deleterun-normal_60_385.txt -s 385 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/610/deleterun-normal_60_610.txt -s 610 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/445/deleterun-normal_65_445.txt -s 445 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/385/deleterun-normal_65_385.txt -s 385 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/695/deleterun-normal_65_695.txt -s 695 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/450/deleterun-normal_70_450.txt -s 450 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/800/deleterun-normal_70_800.txt -s 800 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/570/deleterun-normal_75_570.txt -s 570 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/500/deleterun-normal_75_500.txt -s 500 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/915/deleterun-normal_75_915.txt -s 915 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/550/deleterun-normal_80_550.txt -s 550 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/470/deleterun-normal_80_470.txt -s 470 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/880/deleterun-normal_80_880.txt -s 880 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/550/deleterun-normal_85_550.txt -s 550 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/635/deleterun-normal_85_635.txt -s 635 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/1020/deleterun-normal_85_1020.txt -s 1020 -l 2000
 	
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/760/deleterun-normal_90_760.txt -s 760 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/670/deleterun-normal_90_670.txt -s 670 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/1200/deleterun-normal_90_1200.txt -s 1200 -l 2000
 
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/580/deleterun-normal_95_580.txt -s 580 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/630/deleterun-normal_95_630.txt -s 630 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/1030/deleterun-normal_95_1030.txt -s 1030 -l 2000
 
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/deleterun-normal_100_850.txt -s 850 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/deleterun-normal_100_785.txt -s 785 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/1400/deleterun-normal_100_1400.txt -s 1300 -l 2000
 
 trimrun: bin/trim	
-	./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/trim-normal_10_43.txt -s 43 -l 2000
+	# ./bin/trim -d -i ../trace/user000.csv -o report/ray/user000/425/trim-user000_425.txt -s 425 -l 2000
+	# ./bin/trim -d -i ../trace/user000.csv -o report/ray/user000/488/trim-user000_488.txt -s 488 -l 2000
+	# ./bin/trim -d -i ../trace/user000.csv -o report/ray/user000/781/trim-user000_781.txt -s 781 -l 2000
+	
+	./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/600/trim-user002_600.txt -s 600 -l 2000
+	./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/700/trim-user002_700.txt -s 700 -l 2000
+	# ./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/1096/trim-user002_1096.txt -s 1096 -l 2000
+
+	# ./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/trim-normal_10_43.txt -s 43 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/trim-normal_10_37.txt -s 37 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/trim-normal_10_68.txt -s 68 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/63/trim-normal_15_63.txt -s 63 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/55/trim-normal_15_55.txt -s 55 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/102/trim-normal_15_102.txt -s 102 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/78/trim-normal_20_78.txt -s 78 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/88/trim-normal_20_88.txt -s 88 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/138/trim-normal_20_138.txt -s 138 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/100/trim-normal_25_100.txt -s 100 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/110/trim-normal_25_110.txt -s 110 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/178/trim-normal_25_178.txt -s 178 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/280/trim-normal_30_280.txt -s 280 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/250/trim-normal_30_250.txt -s 250 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/450/trim-normal_30_450.txt -s 450 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/150/trim-normal_35_150.txt -s 150 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/170/trim-normal_35_170.txt -s 170 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/270/trim-normal_35_270.txt -s 270 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/275/trim-normal_40_275.txt -s 275 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/235/trim-normal_40_235.txt -s 235 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/430/trim-normal_40_430.txt -s 430 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/242/trim-normal_45_242.txt -s 242 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/211/trim-normal_45_211.txt -s 211 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/380/trim-normal_45_380.txt -s 380 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/245/trim-normal_50_245.txt -s 245 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/285/trim-normal_50_285.txt -s 285 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/455/trim-normal_50_455.txt -s 455 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/340/trim-normal_55_340.txt -s 340 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/298/trim-normal_55_298.txt -s 298 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/525/trim-normal_55_525.txt -s 525 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/340/trim-normal_60_340.txt -s 340 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/385/trim-normal_60_385.txt -s 385 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/610/trim-normal_60_610.txt -s 610 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/445/trim-normal_65_445.txt -s 445 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/385/trim-normal_65_385.txt -s 385 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/695/trim-normal_65_695.txt -s 695 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/450/trim-normal_70_450.txt -s 450 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/800/trim-normal_70_800.txt -s 800 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/570/trim-normal_75_570.txt -s 570 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/500/trim-normal_75_500.txt -s 500 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/915/trim-normal_75_915.txt -s 915 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/550/trim-normal_80_550.txt -s 550 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/470/trim-normal_80_470.txt -s 470 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/880/trim-normal_80_880.txt -s 880 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/550/trim-normal_85_550.txt -s 550 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/635/trim-normal_85_635.txt -s 635 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/1020/trim-normal_85_1020.txt -s 1020 -l 2000
 	
 	# ./bin/trim -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/760/trim-normal_90_760.txt -s 760 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/670/trim-normal_90_670.txt -s 670 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/1200/trim-normal_90_1200.txt -s 1200 -l 2000
 
 	# ./bin/trim -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/580/trim-normal_95_580.txt -s 580 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/630/trim-normal_95_630.txt -s 630 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/1030/trim-normal_95_1030.txt -s 1030 -l 2000
 
 	# ./bin/trim -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/trim-normal_100_850.txt -s 850 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/trim-normal_100_785.txt -s 785 -l 2000
+	# ./bin/trim -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/1400/trim-normal_100_1400.txt -s 1300 -l 2000
 
 trimv2run: bin/trim_v2
+	# ./bin/trim_v2 -d -i ../trace/user000.csv -o report/ray/user000/425/trim_v2-user000_425.txt -s 425 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user000.csv -o report/ray/user000/488/trim_v2-user000_488.txt -s 488 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user000.csv -o report/ray/user000/781/trim_v2-user000_781.txt -s 781 -l 2000
+
+	./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/600/trim_v2-user002_600.txt -s 600 -l 2000
+	./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/700/trim_v2-user002_700.txt -s 700 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/1096/trim_v2-user002_1096.txt -s 1096 -l 2000
+
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/trim_v2-normal_10_43.txt -s 43 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/trim_v2-normal_10_37.txt -s 37 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/trim_v2-normal_10_68.txt -s 68 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/63/trim_v2-normal_15_63.txt -s 63 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/55/trim_v2-normal_15_55.txt -s 55 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/102/trim_v2-normal_15_102.txt -s 102 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/78/trim_v2-normal_20_78.txt -s 78 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/88/trim_v2-normal_20_88.txt -s 88 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/138/trim_v2-normal_20_138.txt -s 138 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/100/trim_v2-normal_25_100.txt -s 100 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/110/trim_v2-normal_25_110.txt -s 110 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/178/trim_v2-normal_25_178.txt -s 178 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/280/trim_v2-normal_30_280.txt -s 280 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/250/trim_v2-normal_30_250.txt -s 250 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/450/trim_v2-normal_30_450.txt -s 450 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/150/trim_v2-normal_35_150.txt -s 150 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/170/trim_v2-normal_35_170.txt -s 170 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/270/trim_v2-normal_35_270.txt -s 270 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/275/trim_v2-normal_40_275.txt -s 275 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/235/trim_v2-normal_40_235.txt -s 235 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/430/trim_v2-normal_40_430.txt -s 430 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/242/trim_v2-normal_45_242.txt -s 242 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/211/trim_v2-normal_45_211.txt -s 211 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/380/trim_v2-normal_45_380.txt -s 380 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/245/trim_v2-normal_50_245.txt -s 245 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/285/trim_v2-normal_50_285.txt -s 285 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/455/trim_v2-normal_50_455.txt -s 455 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/340/trim_v2-normal_55_340.txt -s 340 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/298/trim_v2-normal_55_298.txt -s 298 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/525/trim_v2-normal_55_525.txt -s 525 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/340/trim_v2-normal_60_340.txt -s 340 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/385/trim_v2-normal_60_385.txt -s 385 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/610/trim_v2-normal_60_610.txt -s 610 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/445/trim_v2-normal_65_445.txt -s 445 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/385/trim_v2-normal_65_385.txt -s 385 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/695/trim_v2-normal_65_695.txt -s 695 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/450/trim_v2-normal_70_450.txt -s 450 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/800/trim_v2-normal_70_800.txt -s 800 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/570/trim_v2-normal_75_570.txt -s 570 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/500/trim_v2-normal_75_500.txt -s 500 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/915/trim_v2-normal_75_915.txt -s 915 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/550/trim_v2-normal_80_550.txt -s 550 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/470/trim_v2-normal_80_470.txt -s 470 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/880/trim_v2-normal_80_880.txt -s 880 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/550/trim_v2-normal_85_550.txt -s 550 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/635/trim_v2-normal_85_635.txt -s 635 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/1020/trim_v2-normal_85_1020.txt -s 1020 -l 2000
 	
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/760/trim_v2-normal_90_760.txt -s 760 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/670/trim_v2-normal_90_670.txt -s 670 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/1200/trim_v2-normal_90_1200.txt -s 1200 -l 2000
 
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/580/trim_v2-normal_95_580.txt -s 580 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/630/trim_v2-normal_95_630.txt -s 630 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/1030/trim_v2-normal_95_1030.txt -s 1030 -l 2000
 
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/trim_v2-normal_100_850.txt -s 850 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/trim_v2-normal_100_785.txt -s 785 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/1400/trim_v2-normal_100_1400.txt -s 1300 -l 2000
 
 dedurun: bin/dedupewrite
 	# ./bin/dedupewrite -d 1 -i dedupe/normal/user000_128kb_h_1.csv -o report/dedupewrite-user000_128kb_h_1_425.txt -s 425 -l 425

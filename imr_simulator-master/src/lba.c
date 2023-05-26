@@ -577,6 +577,13 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
     {
         return 0;
     }
+    // if (line_cnt == 88240 || line_cnt == 205583 || line_cnt == 432477 || line_cnt == 518515 || line_cnt == 568392 || line_cnt == 603393 || line_cnt == 618889 || line_cnt == 629459 || line_cnt == 643300 || line_cnt == 677947)
+    // {
+    //     printf("line count: %d, pba[154232] refcnt = %u\n", line_cnt, d->storage[154232].referenced_count);
+    //     printf("hash in pba[154232]: %s\n", d->storage[154232].hash);
+    //     printf("line count: %d, pba[27061] refcnt = %u\n", line_cnt, d->storage[27061].referenced_count);
+    //     printf("hash in pba[27061]: %s\n\n", d->storage[27061].hash);
+    // }
     if (lba > report->max_logical_block_num || (lba + (n - 1)) > report->max_logical_block_num)
     {
         printf("lba = %ld\n", lba);
@@ -599,6 +606,7 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         {
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
+                // fprintf(stderr, "line cnt: %d\n", line_cnt);
                 fprintf(stderr, "%s will be write\n", hash);
                 fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
                 fprintf(stderr, "lba = %lu\n", lba);
@@ -623,6 +631,14 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         }
 #endif
     }
+    // if (line_cnt == 88240 || line_cnt == 205583 || line_cnt == 432477 || line_cnt == 518515 || line_cnt == 568392 || line_cnt == 603393 || line_cnt == 618889 || line_cnt == 629459 || line_cnt == 643300 || line_cnt == 677947)
+    // {
+    //     printf("line count: %d, pba[154232] refcnt = %u\n", line_cnt, d->storage[154232].referenced_count);
+    //     printf("hash in pba[154232]: %s\n", d->storage[154232].hash);
+    //     printf("line count: %d, pba[27061] refcnt = %u\n", line_cnt, d->storage[27061].referenced_count);
+    //     printf("hash in pba[27061]: %s\n\n", d->storage[27061].hash);
+    //     printf("-----------------------------------------------------------------------\n");
+    // }
     if (num_invalid == n)
         return 0;
     return batch_write(d, &gbtable);

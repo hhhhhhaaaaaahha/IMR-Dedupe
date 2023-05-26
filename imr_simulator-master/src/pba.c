@@ -612,6 +612,7 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
         if (d->storage[prev_track].status == status_in_use || d->storage[next_track].status == status_in_use)
         {
             if (d->storage[pba].referenced_count == 0)
+            // if (true)
             {
                 tba = DEDU_run_block_swap(d, pba);
                 if ((signed)tba != -1)
@@ -647,6 +648,10 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
             {
                 pba = temp;
             }
+            if (d->storage[pba].status != status_trimed)
+            {
+                d->storage[pba].referenced_count++;
+            }
         }
 #endif
         DEDU_update_ltp_table(d, lba, pba, hash);
@@ -656,6 +661,16 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
 #ifdef DEDU_WRITE
     else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
+        // if (line_cnt == 677947)
+        // {
+        //     printf("Start tracing.\n");
+        //     int i = 0;
+        //     while (d->storage[pba].lba[i] != 0)
+        //     {
+        //         printf("lba in storage: %lu\n", d->storage[pba].lba[i]);
+        //         i++;
+        //     }
+        // }
         pba = DEDU_update(d, lba, pba, hash);
         return pba;
     }
