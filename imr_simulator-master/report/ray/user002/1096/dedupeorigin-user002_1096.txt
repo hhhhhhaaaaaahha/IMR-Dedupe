@@ -1,0 +1,56 @@
+Init disk...
+Init disk [OK]
+Parse instructions...
+
+Phase2!
+Parse instructions [OK]
+
+-------------------------
+Time information:
+
+378.000000 seconds total
+-------------------------
+Disk information:
+
+Size of disk = 1096 GB
+-------------------------
+Transaction information:
+
+Total number of instructions        =          1189264 instructions
+Total number of read instructions   =                0 instructions
+Total number of write instructions  =          1121948 instructions
+Total number of delete instructions  =            67316 instructions
+Total number of invalid read        =                0 blocks
+Total number of invalid write       =                0 blocks
+Total size of read instructions   =                0 MB
+Total size of write instructions  =             4382 MB
+
+-------------------------
+Total write top buffer size =                1897 MB
+Total read scp size         =                1853 MB
+Total scp count             =              474589 times
+Total block swap count      =                   0 blocks
+#########################
+######## Latency ########
+#########################
+Secure Deletion Latency     =      14130072131098 ns
+Data Write Latency          =      40988079153694 ns
+Data Read Latency           =      14130072131098 ns
+#########################
+######### Size ##########
+#########################
+Accumulated Write Size      =       2725781700608 B
+Accumulated Rewrite Size    =         50195333120 B
+Accumulated Reread Size     =         75788976128 B
+#########################
+Secure Deletion:
+Accumulated Write Size      =        995285270528 B
+Accumulated Rewrite Size    =                   0 B
+Accumulated Reread Size     =                   0 B
+#########################
+Total Write Block Size      =       2725781700608 B
+Total Read Block Size       =        995285270528 B
+Total Delete Block Size     =        995285270528 B
+#########################
+Storage usage               =               48.97  %
+End
