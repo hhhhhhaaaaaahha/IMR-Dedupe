@@ -626,14 +626,19 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
     return pba;
 }
 
-unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int line_cnt)
+unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt)
 {
     // printf("line cnt= %d\n", line_cnt);
     unsigned long pba;
     /*
-    以下 flow control 為判斷：
-    如果是被刪除的資料或是已經存在的資料，則進行特定操作
-    （刪除的資料復原，存在的資料更新）
+        以下 flow control 為判斷：
+        如果是被刪除的資料或是已經存在的資料，則進行特定操作
+        （刪除的資料復原，存在的資料更新）
+
+        DEDU_is_lba_trimed: assign pba in ltp_table[lba] to pba, and return whether ltp_entry is trimed.
+        DEDU_is_lba_valid:  assign pba in ltp_table[lba] to pba,
+                            and return whether block[pba] is in use,
+                            ltp_entry is valid and ltp_entry.hash == hash.
     */
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
@@ -659,6 +664,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
         return pba;
     }
 #ifdef DEDU_WRITE
+    // 如果 ltp_entry 已有資料，且目前是 valid
     else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
         // if (line_cnt == 677947)
@@ -671,7 +677,15 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, int
         //         i++;
         //     }
         // }
-        pba = DEDU_update(d, lba, pba, hash);
+        // 若 input 與 ltp_entry 中的 hash 不同，代表要更新；反之，則略過
+        if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
+        {
+            pba = DEDU_update(d, lba, pba, hash);
+        }
+        else
+        {
+            *pass = true;
+        }
         return pba;
     }
 #else

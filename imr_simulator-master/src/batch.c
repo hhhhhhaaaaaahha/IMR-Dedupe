@@ -230,11 +230,11 @@ int batch_read(struct disk *d, b_table_head_t *t)
 
 int batch_write(struct disk *d, b_table_head_t *t)
 {
-    int count, merge_count;
-    assert(0 != (merge_count = batch_sync(d, t))); // 檢查batch table是不是為0個，是的話就跳出，並把個數存在merge_count裡面
-#ifndef CMR                                        // if not define CMR
-    int extend_count = batch_extend(d, t);         // 呼叫batch_extend這個function來檢查top跟bottom track之間影響的問題，最後再把做好處理的extend table的總entry的個數回傳
-    assert(extend_count >= merge_count);           // 檢查extend table的個數有沒有大於原本table的個數，如果沒有的話就跳出
+    int count; //, merge_count;
+    // assert(0 != (merge_count = batch_sync(d, t))); // 檢查batch table是不是為0個，是的話就跳出，並把個數存在merge_count裡面
+#ifndef CMR // if not define CMR
+    // int extend_count = batch_extend(d, t); // 呼叫batch_extend這個function來檢查top跟bottom track之間影響的問題，最後再把做好處理的extend table的總entry的個數回傳
+    // assert(extend_count >= merge_count);   // 檢查extend table的個數有沒有大於原本table的個數，如果沒有的話就跳出
 #endif
     count = pba_write(d, t); // 執行pba_write，回傳做了幾個entry到count
     record_write(d, t);      // 紀錄write的一些info到d->report裡面

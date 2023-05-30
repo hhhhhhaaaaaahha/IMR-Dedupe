@@ -573,10 +573,12 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
 {
     size_t num_invalid = 0;
     struct report *report = &d->report;
+    bool pass = false;
     if (n == 0)
     {
         return 0;
     }
+    // printf("line count: %d\n", line_cnt);
     // if (line_cnt == 88240 || line_cnt == 205583 || line_cnt == 432477 || line_cnt == 518515 || line_cnt == 568392 || line_cnt == 603393 || line_cnt == 618889 || line_cnt == 629459 || line_cnt == 643300 || line_cnt == 677947)
     // {
     //     printf("line count: %d, pba[154232] refcnt = %u\n", line_cnt, d->storage[154232].referenced_count);
@@ -595,7 +597,7 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
     for (size_t i = 0; i < n; i++)
     {
         unsigned long pba;
-        pba = DEDU_pba_search(d, lba + i, hash, line_cnt);
+        pba = DEDU_pba_search(d, lba + i, hash, &pass, line_cnt);
         assert(pba < d->report.max_block_num);
 #ifdef NO_DEDU
         d->storage[pba].lba[0] = lba + i;
@@ -625,9 +627,18 @@ int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int 
         }
         else
         {
-            d->storage[pba].lba[0] = lba + i;
-            strcpy(d->storage[pba].hash, hash);
-            batch_add(d, pba, &gbtable);
+            if (pass)
+            {
+                // printf("hash in ltp_table: %s\n", d->ltp_table_head->table[lba].hash);
+                // printf("hash to be written: %s\n", hash);
+                printf("Skipped.\n");
+            }
+            else
+            {
+                d->storage[pba].lba[0] = lba + i;
+                strcpy(d->storage[pba].hash, hash);
+                batch_add(d, pba, &gbtable);
+            }
         }
 #endif
     }
