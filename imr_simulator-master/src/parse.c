@@ -9,6 +9,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
     int line_cnt = 1;
     while ((fgets(line, sizeof(line), stream)) != NULL)
     {
+        // printf("line_cnt: %d\n", line_cnt);
         int operation;
         char hash[20];
         uint64_t size, lba;

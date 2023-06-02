@@ -16,8 +16,6 @@ unsigned long find_empty_block_swap(struct disk *d)
     unsigned long pba = -1;
     for (size_t i = 1; i < d->report.max_track_num; i += 2)
     {
-        if (d->ptt_table_head->table[i].type != normal_type)
-            continue;
         if (d->storage[i].status != status_in_use)
         {
             continue;

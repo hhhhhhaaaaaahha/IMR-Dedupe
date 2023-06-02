@@ -167,6 +167,9 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
             }
 #endif
             perror("Error: disk is full. Can't find next empty block.");
+            output_disk_info(d);
+            output_ltp_table(d);
+            output_ptt_table(d);
             longjmp(env, 1);
             break;
 #endif
@@ -425,7 +428,8 @@ unsigned long lba_to_pba(struct disk *d, unsigned long lba)
 bool DEDU_is_ltp_mapping_valid(struct disk *d, unsigned long lba, char *hash)
 {
     struct ltp_entry *e = &d->ltp_table_head->table[lba];
-    return ((e->valid) && strcmp(hash, e->hash) == 0);
+    return e->valid;
+    // return ((e->valid) && strcmp(hash, e->hash) == 0);
 }
 void DEDU_delete_ltp_table(struct disk *d, unsigned long lba)
 {
@@ -469,41 +473,41 @@ bool DEDU_is_lba_valid(struct disk *d, unsigned long lba, char *hash, unsigned l
     /*
     (pba == status_in_use) && (ltp.valid == true) && (ltp.hash == hash)
     */
-    if (is_storage_data_valid(d, pba) && DEDU_is_ltp_mapping_valid(d, lba, hash)) // 如果is_ltp_mapping_valid跟is_storage_data_valid這兩個function是true的話，這個function就return true
+    if (is_storage_data_valid(d, pba) && DEDU_is_ltp_mapping_valid(d, lba, hash))
     {
-#ifdef TOP_BUFFER
-        block_type_t type = d->ptt_table_head->table[pba].type;
-        unsigned long track = pba;
-        // unsigned long track = lba_to_track(pba);
-        switch (type)
-        {
-        // 如果type是top buffer或者是block swap的話，把pba轉成對應的tba回傳給p
-        case top_buffer_type:
-        case block_swap_type:
-            *p = pba_to_tba(d, pba);
-            return true;
-        // 如果是buffered_type的話回傳原本的pba
-        case buffered_type:
-            return true;
-        case normal_type:
-            // 如果該track是top track或者zalloc的phase在第一階段的話回傳原本的pba
-            if (is_toptrack(track))
-                return true;
-            else if (d->zinfo.phases == zalloc_phase1)
-                return true;
-            // 如果enable_top_buffer==true的話
-            else if (enable_top_buffer)
-            {
-                *p = run_top_buffer(d, pba);
-                return true;
-            }
-            break;
-        default:
-            fprintf(stderr, "Error: block type is invalid.\n");
-            exit(EXIT_FAILURE);
-            break;
-        }
-#endif
+        // #ifdef TOP_BUFFER
+        //         block_type_t type = d->ptt_table_head->table[pba].type;
+        //         unsigned long track = pba;
+        //         // unsigned long track = lba_to_track(pba);
+        //         switch (type)
+        //         {
+        //         // 如果type是top buffer或者是block swap的話，把pba轉成對應的tba回傳給p
+        //         case top_buffer_type:
+        //         case block_swap_type:
+        //             *p = pba_to_tba(d, pba);
+        //             return true;
+        //         // 如果是buffered_type的話回傳原本的pba
+        //         case buffered_type:
+        //             return true;
+        //         case normal_type:
+        //             // 如果該track是top track或者zalloc的phase在第一階段的話回傳原本的pba
+        //             if (is_toptrack(track))
+        //                 return true;
+        //             else if (d->zinfo.phases == zalloc_phase1)
+        //                 return true;
+        //             // 如果enable_top_buffer==true的話
+        //             else if (enable_top_buffer)
+        //             {
+        //                 *p = run_top_buffer(d, pba);
+        //                 return true;
+        //             }
+        //             break;
+        //         default:
+        //             fprintf(stderr, "Error: block type is invalid.\n");
+        //             exit(EXIT_FAILURE);
+        //             break;
+        //         }
+        // #endif
         return true;
     }
     return false; // 不是的話就return false
@@ -625,6 +629,45 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
     }
     return pba;
 }
+void do_some_top_buffer_stuff(struct disk *d, unsigned long lba, unsigned long *p)
+{
+#ifdef TOP_BUFFER
+    unsigned long pba = lba_to_pba(d, lba);
+    *p = pba;
+
+    block_type_t type = d->ptt_table_head->table[pba].type;
+    unsigned long track = pba;
+    // unsigned long track = lba_to_track(pba);
+    switch (type)
+    {
+    // 如果type是top buffer或者是block swap的話，把pba轉成對應的tba回傳給p
+    case top_buffer_type:
+    case block_swap_type:
+        *p = pba_to_tba(d, pba);
+        break;
+    // 如果是buffered_type的話回傳原本的pba
+    case buffered_type:
+        break;
+    case normal_type:
+        // 如果該track是top track或者zalloc的phase在第一階段的話回傳原本的pba
+        if (is_toptrack(track))
+            break;
+        else if (d->zinfo.phases == zalloc_phase1)
+            break;
+        // 如果enable_top_buffer==true的話
+        else if (enable_top_buffer)
+        {
+            *p = run_top_buffer(d, pba);
+            break;
+        }
+        break;
+    default:
+        fprintf(stderr, "Error: block type is invalid.\n");
+        exit(EXIT_FAILURE);
+        break;
+    }
+#endif
+}
 
 unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt)
 {
@@ -643,44 +686,62 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
 #ifndef NO_DEDU
-        // 檢查 lba 被刪除過後，該 lba 對應的 pba 是否有被 swap 過
-        if (strcmp(hash, d->storage[pba].hash) != 0)
+        // 若 input hash 與 ltp_entry 中的 hash 不同，則代表要重新寫入
+        if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
         {
-            // 重新定位 lba 對應的 pba
-            unsigned long temp = d->report.max_block_num;
-            temp = find_swapped_pba(d, hash, temp, line_cnt);
-            if (temp < d->report.max_block_num)
+#ifdef DEDU_WRITE
+            pba = DEDU_update(d, lba, pba, hash);
+
+            // 如果 DEDU_update 沒有執行 block swap 的話，
+            // 要另行將新的 hash 寫入 ltp_entry 中
+            if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
             {
-                pba = temp;
+                DEDU_update_ltp_table(d, lba, pba, hash);
             }
-            if (d->storage[pba].status != status_trimed)
+#else
+            do_some_top_buffer_stuff(d, lba, &pba);
+            DEDU_update_ltp_table(d, lba, pba, hash);
+#endif
+        }
+        else
+        {
+            // 檢查 lba 被刪除過後，該 lba 對應的 pba 是否有被 swap 過
+            if (strcmp(hash, d->storage[pba].hash) != 0)
             {
-                d->storage[pba].referenced_count++;
+                // 重新定位 lba 對應的 pba
+                unsigned long temp = d->report.max_block_num;
+                temp = find_swapped_pba(d, hash, temp, line_cnt);
+                if (temp < d->report.max_block_num)
+                {
+                    pba = temp;
+                }
+                if (d->storage[pba].status != status_trimed)
+                {
+                    d->storage[pba].referenced_count++;
+                }
             }
+            DEDU_update_ltp_table(d, lba, pba, hash);
+            return pba;
         }
 #endif
         DEDU_update_ltp_table(d, lba, pba, hash);
-
         return pba;
     }
 #ifdef DEDU_WRITE
     // 如果 ltp_entry 已有資料，且目前是 valid
     else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
-        // if (line_cnt == 677947)
-        // {
-        //     printf("Start tracing.\n");
-        //     int i = 0;
-        //     while (d->storage[pba].lba[i] != 0)
-        //     {
-        //         printf("lba in storage: %lu\n", d->storage[pba].lba[i]);
-        //         i++;
-        //     }
-        // }
         // 若 input 與 ltp_entry 中的 hash 不同，代表要更新；反之，則略過
         if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
         {
             pba = DEDU_update(d, lba, pba, hash);
+
+            // 如果 DEDU_update 沒有執行 block swap 的話，
+            // 要另行將新的 hash 寫入 ltp_entry 中
+            if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
+            {
+                DEDU_update_ltp_table(d, lba, pba, hash);
+            }
         }
         else
         {
@@ -691,6 +752,17 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
 #else
     else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
     {
+#ifndef NO_DEDU
+        if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
+        {
+            do_some_top_buffer_stuff(d, lba, &pba);
+            DEDU_update_ltp_table(d, lba, pba, hash);
+        }
+        else
+        {
+            *pass = true;
+        }
+#endif
         return pba;
     }
 

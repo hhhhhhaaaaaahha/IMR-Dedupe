@@ -85,10 +85,12 @@ void inversion_swap(struct disk *d, unsigned long tba, unsigned long bba)
     if (is_top_should_be_swap(d, tba))
     {
         unsigned long swap_bba = find_unused_bottom_block(d);
-        printf("swap_bba = %lu\n", swap_bba);
-        printf("bba = %lu\n", bba);
         if (swap_bba != bba && (signed)swap_bba != -1)
         {
+            printf("tba = %lu\n", tba);
+            printf("swap_bba = %lu\n", swap_bba);
+            printf("-----------\n");
+            // printf("bba = %lu\n", bba);
             DEDU_createBlockSwap(d, tba, swap_bba);
             d->report.reversion_swap_count++;
         }
