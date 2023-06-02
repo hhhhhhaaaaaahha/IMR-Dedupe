@@ -10,7 +10,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-155.000000 seconds total
+161.000000 seconds total
 -------------------------
 Disk information:
 
@@ -30,29 +30,29 @@ Total size of write instructions  =             1953 MB
 -------------------------
 Total write top buffer size =                 367 MB
 Total read scp size         =                 347 MB
-Total scp count             =               88977 times
+Total scp count             =               88987 times
 Total block swap count      =                   0 blocks
 #########################
 ######## Latency ########
 #########################
-Secure Deletion Latency     =       2649137312514 ns
-Data Write Latency          =      24282498790832 ns
-Data Read Latency           =       2649137312514 ns
+Secure Deletion Latency     =       2649435045334 ns
+Data Write Latency          =      24200324228646 ns
+Data Read Latency           =       2649435045334 ns
 #########################
 ######### Size ##########
 #########################
-Accumulated Write Size      =       1028111990784 B
-Accumulated Rewrite Size    =        174818590720 B
-Accumulated Reread Size     =        324192436224 B
+Accumulated Write Size      =       1028132962304 B
+Accumulated Rewrite Size    =        170622189568 B
+Accumulated Reread Size     =        321694728192 B
 #########################
 Secure Deletion:
-Accumulated Write Size      =        186598293504 B
+Accumulated Write Size      =        186619265024 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =       1028111990784 B
-Total Read Block Size       =        186598293504 B
-Total Delete Block Size     =        186598293504 B
+Total Write Block Size      =       1028132962304 B
+Total Read Block Size       =        186619265024 B
+Total Delete Block Size     =        186619265024 B
 #########################
-Storage usage               =               81.05  %
+Storage usage               =               81.09  %
 End

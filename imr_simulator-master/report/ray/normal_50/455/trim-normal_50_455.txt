@@ -10,7 +10,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-47.000000 seconds total
+44.000000 seconds total
 -------------------------
 Disk information:
 

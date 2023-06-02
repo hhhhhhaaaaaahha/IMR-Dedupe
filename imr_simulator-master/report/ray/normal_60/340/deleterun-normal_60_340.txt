@@ -35,14 +35,14 @@ Total inversion swap count      =                   0 blocks
 ######## Latency ########
 #########################
 Secure Deletion Latency     =                   0 ns
-Data Write Latency          =      22103341740882 ns
+Data Write Latency          =      22103912299650 ns
 Data Read Latency           =         34596553684 ns
 #########################
 ######### Size ##########
 #########################
 Accumulated Write Size      =        803200827392 B
-Accumulated Rewrite Size    =        232618196992 B
-Accumulated Reread Size     =        354297053184 B
+Accumulated Rewrite Size    =        232630779904 B
+Accumulated Reread Size     =        354315927552 B
 #########################
 Secure Deletion:
 Accumulated Write Size      =                   0 B

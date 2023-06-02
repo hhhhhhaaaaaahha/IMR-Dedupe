@@ -12,7 +12,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-155.000000 seconds total
+147.000000 seconds total
 -------------------------
 Disk information:
 
@@ -35,14 +35,14 @@ Total inversion swap count      =                   0 blocks
 ######## Latency ########
 #########################
 Secure Deletion Latency     =                   0 ns
-Data Write Latency          =      21123250581466 ns
+Data Write Latency          =      21122245876904 ns
 Data Read Latency           =         47399064944 ns
 #########################
 ######### Size ##########
 #########################
 Accumulated Write Size      =        824008769536 B
-Accumulated Rewrite Size    =        205380386816 B
-Accumulated Reread Size     =        312016371712 B
+Accumulated Rewrite Size    =        205361512448 B
+Accumulated Reread Size     =        311982817280 B
 #########################
 Secure Deletion:
 Accumulated Write Size      =                   0 B

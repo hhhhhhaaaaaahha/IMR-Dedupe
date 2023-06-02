@@ -12,7 +12,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-220.000000 seconds total
+229.000000 seconds total
 -------------------------
 Disk information:
 
@@ -29,28 +29,28 @@ Total number of invalid write       =                0 blocks
 Total size of read instructions   =                0 MB
 Total size of write instructions  =             1953 MB
 
-Total block swap count      =               65866 blocks
-Total inversion swap count      =               64915 blocks
+Total block swap count      =               66028 blocks
+Total inversion swap count      =               65070 blocks
 #########################
 ######## Latency ########
 #########################
 Secure Deletion Latency     =                   0 ns
-Data Write Latency          =      31216391671536 ns
-Data Read Latency           =       1961046992212 ns
+Data Write Latency          =      31239261358156 ns
+Data Read Latency           =       1965870263896 ns
 #########################
 ######### Size ##########
 #########################
-Accumulated Write Size      =        958295703552 B
-Accumulated Rewrite Size    =        386544959488 B
-Accumulated Reread Size     =        582775472128 B
+Accumulated Write Size      =        958631247872 B
+Accumulated Rewrite Size    =        386914058240 B
+Accumulated Reread Size     =        583377354752 B
 #########################
 Secure Deletion:
 Accumulated Write Size      =                   0 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =        958295703552 B
-Total Read Block Size       =        138131013632 B
+Total Write Block Size      =        958631247872 B
+Total Read Block Size       =        138470752256 B
 Total Delete Block Size     =                   0 B
 #########################
 Storage usage               =               81.15  %
