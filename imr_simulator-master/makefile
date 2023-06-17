@@ -137,7 +137,7 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: trimrun trimv2run deleterun#dedupeoriginrun # nodeduperun
+run: trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
 
 nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/ray/user000/425/nodedupe-user000_425.txt -s 425 -l 2000
@@ -199,7 +199,7 @@ nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/nodedupe-normal_100_785.txt -s 785 -l 2000
 dedupeoriginrun: bin/dedupeorigin		
 	./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/232/dedupeorigin-normal_50_half_half_232.txt -s 232 -l 2000
-	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/dedupeorigin-normal_50_half_half_260.txt -s 260 -l 2000
+	./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/dedupeorigin-normal_50_half_half_260.txt -s 260 -l 2000
 	./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/420/dedupeorigin-normal_50_half_half_420.txt -s 420 -l 2000
 
 	# ./bin/dedupeorigin -d -i ../trace/user000.csv -o report/ray/user000/420/dedupeorigin-user000_420.txt -s 420 -l 2000

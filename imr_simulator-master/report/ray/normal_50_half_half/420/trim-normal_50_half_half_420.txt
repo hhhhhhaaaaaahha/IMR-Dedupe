@@ -6,7 +6,7 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-39.000000 seconds total
+30.000000 seconds total
 -------------------------
 Disk information:
 
@@ -43,7 +43,7 @@ Accumulated Write Size      =                   0 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =        240931307520 B
+Total Write Block Size      =        708845764608 B
 Total Read Block Size       =                   0 B
 Total Delete Block Size     =                   0 B
 #########################
