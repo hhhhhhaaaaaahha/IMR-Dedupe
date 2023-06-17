@@ -202,13 +202,13 @@ dedupeoriginrun: bin/dedupeorigin
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/dedupeorigin-normal_50_half_half_260.txt -s 260 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/420/dedupeorigin-normal_50_half_half_420.txt -s 420 -l 2000
 
-	./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/dedupeorigin-user000_new_420.txt -s 420 -l 2000
-	./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/dedupeorigin-user000_new_470.txt -s 470 -l 2000
-	./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/dedupeorigin-user000_new_763.txt -s 763 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/dedupeorigin-user000_new_420.txt -s 420 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/dedupeorigin-user000_new_470.txt -s 470 -l 2000
+	# ./bin/dedupeorigin -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/dedupeorigin-user000_new_763.txt -s 763 -l 2000
 
-	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/600/dedupeorigin-user002_600.txt -s 600 -l 2000
-	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/665/dedupeorigin-user002_665.txt -s 665 -l 2000
-	# ./bin/dedupeorigin -d -i ../trace/user002.csv -o report/ray/user002/1096/dedupeorigin-user002_1096.txt -s 1096 -l 2000
+	./bin/dedupeorigin -d -i ../trace/user002_new.csv -o report/ray/user002_new/600/dedupeorigin-user002_new_600.txt -s 600 -l 2000
+	./bin/dedupeorigin -d -i ../trace/user002_new.csv -o report/ray/user002_new/665/dedupeorigin-user002_new_665.txt -s 665 -l 2000
+	./bin/dedupeorigin -d -i ../trace/user002_new.csv -o report/ray/user002_new/1096/dedupeorigin-user002_new_1096.txt -s 1096 -l 2000
 
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/dedupeorigin-normal_10_43.txt -s 43 -l 2000
 	# ./bin/dedupeorigin -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/dedupeorigin-normal_10_37.txt -s 37 -l 2000
@@ -291,13 +291,13 @@ deleterun: bin/dedupewrite
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/deleterun-normal_50_half_half_260.txt -s 260 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/420/deleterun-normal_50_half_half_420.txt -s 420 -l 2000
 
-	./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/deleterun-user000_new_420.txt -s 420 -l 2000
-	./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/deleterun-user000_new_470.txt -s 470 -l 2000
-	./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/deleterun-user000_new_763.txt -s 763 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/deleterun-user000_new_420.txt -s 420 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/deleterun-user000_new_470.txt -s 470 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/deleterun-user000_new_763.txt -s 763 -l 2000
 
-	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/600/deleterun-user002_600.txt -s 600 -l 2000
-	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/665/deleterun-user002_665.txt -s 665 -l 2000
-	# ./bin/dedupewrite -d -i ../trace/user002.csv -o report/ray/user002/1096/deleterun-user002_1096.txt -s 1096 -l 2000
+	./bin/dedupewrite -d -i ../trace/user002_new.csv -o report/ray/user002_new/600/deleterun-user002_new_600.txt -s 600 -l 2000
+	./bin/dedupewrite -d -i ../trace/user002_new.csv -o report/ray/user002_new/665/deleterun-user002_new_665.txt -s 665 -l 2000
+	./bin/dedupewrite -d -i ../trace/user002_new.csv -o report/ray/user002_new/1096/deleterun-user002_new_1096.txt -s 1096 -l 2000
 
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/deleterun-normal_10_37.txt -s 37 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/deleterun-normal_10_43.txt -s 43 -l 2000
@@ -380,13 +380,13 @@ trimrun: bin/trim
 	# ./bin/trim -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/trim-normal_50_half_half_260.txt -s 260 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/420/trim-normal_50_half_half_420.txt -s 420 -l 2000
 
-	./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/trim-user000_new_420.txt -s 420 -l 2000
-	./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/trim-user000_new_470.txt -s 470 -l 2000
-	./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/trim-user000_new_763.txt -s 763 -l 2000
+	# ./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/trim-user000_new_420.txt -s 420 -l 2000
+	# ./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/trim-user000_new_470.txt -s 470 -l 2000
+	# ./bin/trim -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/trim-user000_new_763.txt -s 763 -l 2000
 	
-	# ./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/600/trim-user002_600.txt -s 600 -l 2000
-	# ./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/665/trim-user002_665.txt -s 665 -l 2000
-	# ./bin/trim -d -i ../trace/user002.csv -o report/ray/user002/1096/trim-user002_1096.txt -s 1096 -l 2000
+	./bin/trim -d -i ../trace/user002_new.csv -o report/ray/user002_new/600/trim-user002_new_600.txt -s 600 -l 2000
+	./bin/trim -d -i ../trace/user002_new.csv -o report/ray/user002_new/665/trim-user002_new_665.txt -s 665 -l 2000
+	./bin/trim -d -i ../trace/user002_new.csv -o report/ray/user002_new/1096/trim-user002_new_1096.txt -s 1096 -l 2000
 
 	# ./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/trim-normal_10_37.txt -s 37 -l 2000
 	# ./bin/trim -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/trim-normal_10_43.txt -s 43 -l 2000
@@ -469,13 +469,13 @@ trimv2run: bin/trim_v2
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/260/trim_v2-normal_50_half_half_260.txt -s 260 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_50_half_half.csv -o report/ray/normal_50_half_half/420/trim_v2-normal_50_half_half_420.txt -s 420 -l 2000
 
-	./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/trim_v2-user000_new_420.txt -s 420 -l 2000
-	./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/trim_v2-user000_new_470.txt -s 470 -l 2000
-	./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/trim_v2-user000_new_763.txt -s 763 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/trim_v2-user000_new_420.txt -s 420 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/trim_v2-user000_new_470.txt -s 470 -l 2000
+	# ./bin/trim_v2 -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/trim_v2-user000_new_763.txt -s 763 -l 2000
 
-	# ./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/600/trim_v2-user002_600.txt -s 600 -l 2000
-	# ./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/665/trim_v2-user002_665.txt -s 665 -l 2000
-	# ./bin/trim_v2 -d -i ../trace/user002.csv -o report/ray/user002/1096/trim_v2-user002_1096.txt -s 1096 -l 2000
+	./bin/trim_v2 -d -i ../trace/user002_new.csv -o report/ray/user002_new/600/trim_v2-user002_new_600.txt -s 600 -l 2000
+	./bin/trim_v2 -d -i ../trace/user002_new.csv -o report/ray/user002_new/665/trim_v2-user002_new_665.txt -s 665 -l 2000
+	./bin/trim_v2 -d -i ../trace/user002_new.csv -o report/ray/user002_new/1096/trim_v2-user002_new_1096.txt -s 1096 -l 2000
 
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/trim_v2-normal_10_43.txt -s 43 -l 2000
 	# ./bin/trim_v2 -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/trim_v2-normal_10_37.txt -s 37 -l 2000
