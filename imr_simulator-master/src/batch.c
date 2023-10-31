@@ -144,7 +144,8 @@ int batch_extend(struct disk *d, b_table_head_t *h)
     bb_head_t *merge_head, *extend_head; /* track 0 is bottom track */
     bb_entry_t *merge_table;
     unsigned long track, prev_track, next_track, pba;
-    size_t i, count;
+    size_t i;
+    // size_t count = 0;
 
     merge_head = &h->block_head;     // merge_head指向h->block_head
     extend_head = &h->extend_head;   // extend_head指向h->extendhead
@@ -169,7 +170,7 @@ int batch_extend(struct disk *d, b_table_head_t *h)
             if (!(bb_table_get_last_pba(extend_head, &pba) && (pba == prev_track))) // 判斷pre_trak是不是最後一個pba
             {
                 bb_table_add(extend_head, track - 1, true); // 如果不是的話就把他加到extend table裡面，並把該entry的isvirtual設成true
-                count++;                                    // count++，用來記錄是virtual的個數
+                // count++;                                    // count++，用來記錄是virtual的個數
             }
         }
 

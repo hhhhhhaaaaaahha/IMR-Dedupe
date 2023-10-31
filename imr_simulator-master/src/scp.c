@@ -45,7 +45,7 @@ unsigned long scp(struct disk *d)
     if (d->report.current_top_buffer_count == 0)
     {
         fprintf(stderr, "Error: Doing scp but no top buffer block found.\n");
-        fprintf(stderr, "top buffer: %lu blocks.\n", d->report.current_top_buffer_count);
+        fprintf(stderr, "top buffer: %llu blocks.\n", d->report.current_top_buffer_count);
         exit(EXIT_FAILURE);
     }
 #endif
@@ -90,7 +90,7 @@ unsigned long run_scp(struct disk *d, unsigned long track)
 {
     unsigned long tba = track;
     struct ptt_entry *tba_entry = NULL;
-    size_t count = 0;
+    // size_t count = 0;
 
     tba_entry = &d->ptt_table_head->table[tba];
     if (tba_entry->type == buffered_type)
@@ -128,8 +128,8 @@ unsigned long run_scp(struct disk *d, unsigned long track)
             }
         }
 #endif
-        count++;
-        // printf("bba=%ld\n", bba);
+        // count++;
+        // printf("bba=%llu\n", bba);
     }
     int read_count = _batch_read(d, &scp_top_mtable);
     // printf("batch_delete_called\n");

@@ -56,6 +56,8 @@
 
 #define BLOCK_SIZE TRACK_SIZE
 
+#define P1_BUF_NUM 32
+
 #define GB_TO_BYTE(n) ((uint64_t)(n) << 30)
 
 #define SECTOR_BITS (64 - __builtin_clzl(SECTOR_PER_TRACK) - 1)
@@ -95,6 +97,7 @@ typedef enum
 struct disk;
 struct track;
 struct block;
+struct buffer_block;
 struct disk_operations;
 struct ltp_table_head;
 struct ltp_entry;
@@ -110,6 +113,7 @@ struct zalloc_info
 {
     unsigned long phase1_start;
     unsigned long phase1_end;
+    bool phase1_is_full;
     unsigned long phase2_start;
     unsigned long phase2_end;
     unsigned long phase3_start;
@@ -168,6 +172,11 @@ struct report
     uint64_t delete_ins_count;
     uint64_t num_invalid_read;
     uint64_t num_invalid_write;
+    /* phase1 buffer */
+    uint64_t next_top_to_write;
+    uint64_t next_bottom_to_write;
+    uint32_t used_buffer_count;
+    bool buffer_is_full;
 #ifdef VIRTUAL_GROUPS
     uint64_t dual_swap_count;
 #endif
@@ -184,6 +193,9 @@ struct disk
     struct ltp_table_head *ltp_table_head;
     /* top-buffer */
     struct ptt_table_head *ptt_table_head;
+
+    struct buffer_block *phase1_buf;
+
 #ifdef DEDU_ORIGIN
     struct dedu_info dinfo;
 #endif
@@ -204,6 +216,16 @@ struct block
     unsigned lba_capacity;
     unsigned count;
     unsigned referenced_count;
+};
+
+struct buffer_block
+{
+    char hash[20];
+    unsigned long *lba;
+    block_status_t status; /* block status */
+    unsigned lba_capacity;
+    unsigned referenced_count;
+    bool dedupe;
 };
 
 static inline bool storage_is_free(struct disk *d, unsigned long pba)
@@ -229,6 +251,7 @@ struct disk_operations
     int (*invalid)(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
     int (*DEDU_write)(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
     void (*DEDU_remove)(struct disk *d, unsigned long lba, size_t n, char *hash);
+    void (*new_alloc)(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
 };
 
 struct ltp_entry
@@ -283,9 +306,12 @@ int lba_invalid(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
 int vg_lba_delete(struct disk *d, unsigned long lba, size_t n, unsigned long fid);
 #ifdef DEDU_ORIGIN
 bool DEDU_is_ltp_mapping_valid(struct disk *d, unsigned long lba, char *hash);
-int DEDU_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
+int dedupe_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
 void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash);
 void delete_all_bottom_track(struct disk *d);
 #endif
+void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
+void buffer_write(struct disk *d, unsigned long lba, char *hash);
+void buffer_flush(struct disk *d);
 extern bool enable_top_buffer;
 extern bool enable_block_swap;

@@ -52,13 +52,14 @@ void parsing_csv(struct disk *d, FILE *stream)
 	char *line = NULL;
 	ssize_t nread;
 	size_t len;
-	unsigned long fid, remain, remainder, num_bytes, left, num_traces, percent, ten_percent, total_traces;
+	unsigned long fid, remain, remainder, num_bytes, left, num_traces, percent, ten_percent;
+	// unsigned long total_traces;
 	int c;
 	struct report *report = &d->report;
 	num_traces = 4500000;
 	percent = num_traces / 100;
 	ten_percent = num_traces / 10;
-	total_traces = 0;
+	// total_traces = 0;
 
 	while ((num_traces--) && ((nread = getline(&line, &len, stream)) != -1))
 	{
@@ -88,7 +89,7 @@ void parsing_csv(struct disk *d, FILE *stream)
 			{
 				n = 1;
 			}
-			total_traces++;
+			// total_traces++;
 			switch (c)
 			{
 			case 1:
@@ -273,13 +274,19 @@ int main(int argc, char **argv)
 	}
 
 	/* create virtual disk */
-	struct disk d = {0};
-	struct report *report = &d.report;
+	void *p;
+	p = malloc(sizeof(struct disk));
+	memset(p, 0, sizeof(struct disk));
+	struct disk *d = p;
+	struct report *report = &d->report;
+	// struct disk d = {0};
+	// struct report *report = &d.report;
 	printf("Init disk...\n");
 #ifdef DEDU_ORIGIN
 	fprintf(fp, "Init disk...\n");
 #endif
-	if (init_disk(&d, physical_size, logical_size))
+	// if (init_disk(&d, physical_size, logical_size))
+	if (init_disk(d, physical_size, logical_size))
 	{
 		fprintf(stderr, "ERROR: init_disk failed\n");
 		exit(EXIT_FAILURE);
@@ -298,12 +305,14 @@ int main(int argc, char **argv)
 	fprintf(fp, "Parse instructions...\n");
 #endif
 	time(&start_time);
-	start_parsing(&d, input_file);
+	start_parsing(d, input_file);
+	// start_parsing(&d, input_file);
 	time(&end_time);
 	printf("Parse instructions [OK]\n\n");
 #ifdef DEDU_ORIGIN
 	fprintf(fp, "Parse instructions [OK]\n\n");
-	double usage = storage_usage(&d);
+	double usage = storage_usage(d);
+	// double usage = storage_usage(&d);
 #endif
 
 	double elapsed = difftime(end_time, start_time);
@@ -315,14 +324,14 @@ int main(int argc, char **argv)
 	printf("Size of disk = %d GB\n", physical_size);
 	printf("-------------------------\n");
 	printf("Transaction information:\n\n");
-	printf("Total number of instructions        = %16lu instructions\n", report->ins_count);
-	printf("Total number of read instructions   = %16lu instructions\n", report->read_ins_count);
-	printf("Total number of write instructions  = %16lu instructions\n", report->write_ins_count);
-	printf("Total number of delete instructions  = %16lu instructions\n", report->delete_ins_count);
-	printf("Total number of invalid read        = %16lu blocks\n", report->num_invalid_read);
-	printf("Total number of invalid write       = %16lu blocks\n", report->num_invalid_write);
-	printf("Total size of read instructions   = %16lu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);
-	printf("Total size of write instructions  = %16lu MB\n", report->write_ins_count * SECTOR_SIZE / MEGABYTE);
+	printf("Total number of instructions        = %16llu instructions\n", report->ins_count);
+	printf("Total number of read instructions   = %16llu instructions\n", report->read_ins_count);
+	printf("Total number of write instructions  = %16llu instructions\n", report->write_ins_count);
+	printf("Total number of delete instructions  = %16llu instructions\n", report->delete_ins_count);
+	printf("Total number of invalid read        = %16llu blocks\n", report->num_invalid_read);
+	printf("Total number of invalid write       = %16llu blocks\n", report->num_invalid_write);
+	printf("Total size of read instructions   = %16llu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);
+	printf("Total size of write instructions  = %16llu MB\n", report->write_ins_count * SECTOR_SIZE / MEGABYTE);
 	printf("\n");
 #ifdef DEDU_ORIGIN
 	fprintf(fp, "-------------------------\n");
@@ -333,65 +342,65 @@ int main(int argc, char **argv)
 	fprintf(fp, "Size of disk = %d GB\n", physical_size);
 	fprintf(fp, "-------------------------\n");
 	fprintf(fp, "Transaction information:\n\n");
-	fprintf(fp, "Total number of instructions        = %16lu instructions\n", report->ins_count);
-	fprintf(fp, "Total number of read instructions   = %16lu instructions\n", report->read_ins_count);
-	fprintf(fp, "Total number of write instructions  = %16lu instructions\n", report->write_ins_count);
-	fprintf(fp, "Total number of delete instructions  = %16lu instructions\n", report->delete_ins_count);
-	fprintf(fp, "Total number of invalid read        = %16lu blocks\n", report->num_invalid_read);
-	fprintf(fp, "Total number of invalid write       = %16lu blocks\n", report->num_invalid_write);
-	fprintf(fp, "Total size of read instructions   = %16lu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);
-	fprintf(fp, "Total size of write instructions  = %16lu MB\n", report->write_ins_count * SECTOR_SIZE / MEGABYTE);
+	fprintf(fp, "Total number of instructions        = %16llu instructions\n", report->ins_count);
+	fprintf(fp, "Total number of read instructions   = %16llu instructions\n", report->read_ins_count);
+	fprintf(fp, "Total number of write instructions  = %16llu instructions\n", report->write_ins_count);
+	fprintf(fp, "Total number of delete instructions  = %16llu instructions\n", report->delete_ins_count);
+	fprintf(fp, "Total number of invalid read        = %16llu blocks\n", report->num_invalid_read);
+	fprintf(fp, "Total number of invalid write       = %16llu blocks\n", report->num_invalid_write);
+	fprintf(fp, "Total size of read instructions   = %16llu MB\n", report->read_ins_count * SECTOR_SIZE / MEGABYTE);
+	fprintf(fp, "Total size of write instructions  = %16llu MB\n", report->write_ins_count * SECTOR_SIZE / MEGABYTE);
 	fprintf(fp, "\n");
 #endif
 #ifdef TOP_BUFFER
 	printf("-------------------------\n");
-	printf("Total write top buffer size = %19lu MB\n", report->total_write_top_buffer_size / MEGABYTE);
-	printf("Total read scp size         = %19lu MB\n", report->total_read_scp_size / MEGABYTE);
+	printf("Total write top buffer size = %19llu MB\n", report->total_write_top_buffer_size / MEGABYTE);
+	printf("Total read scp size         = %19llu MB\n", report->total_read_scp_size / MEGABYTE);
 	printf("Total scp count             = %19d times\n", report->scp_count);
 #ifdef DEDU_ORIGIN
 	fprintf(fp, "-------------------------\n");
-	fprintf(fp, "Total write top buffer size = %19lu MB\n", report->total_write_top_buffer_size / MEGABYTE);
-	fprintf(fp, "Total read scp size         = %19lu MB\n", report->total_read_scp_size / MEGABYTE);
+	fprintf(fp, "Total write top buffer size = %19llu MB\n", report->total_write_top_buffer_size / MEGABYTE);
+	fprintf(fp, "Total read scp size         = %19llu MB\n", report->total_read_scp_size / MEGABYTE);
 	fprintf(fp, "Total scp count             = %19d times\n", report->scp_count);
 #endif
 #endif
 #ifdef BLOCK_SWAP
-	printf("Total block swap count      = %19ld blocks\n", report->current_block_swap_count);
+	printf("Total block swap count      = %19llu blocks\n", report->current_block_swap_count);
 #ifdef DEDU_ORIGIN
-	fprintf(fp, "Total block swap count      = %19ld blocks\n", report->current_block_swap_count);
+	fprintf(fp, "Total block swap count      = %19llu blocks\n", report->current_block_swap_count);
 #endif
 #elif defined DEDU_WRITE
-	printf("Total block swap count      = %19ld blocks\n", report->current_block_swap_count);
-	printf("Total inversion swap count      = %19ld blocks\n", report->reversion_swap_count);
+	printf("Total block swap count      = %19llu blocks\n", report->current_block_swap_count);
+	printf("Total inversion swap count      = %19llu blocks\n", report->reversion_swap_count);
 #ifdef DEDU_ORIGIN
-	fprintf(fp, "Total block swap count      = %19ld blocks\n", report->current_block_swap_count);
-	fprintf(fp, "Total inversion swap count      = %19ld blocks\n", report->reversion_swap_count);
+	fprintf(fp, "Total block swap count      = %19llu blocks\n", report->current_block_swap_count);
+	fprintf(fp, "Total inversion swap count      = %19llu blocks\n", report->reversion_swap_count);
 #endif
 #endif
 #ifdef VIRTUAL_GROUPS
-	printf("Total dual swap count      = %19ld blocks\n", report->dual_swap_count);
+	printf("Total dual swap count      = %19llu blocks\n", report->dual_swap_count);
 #endif
 	printf("#########################\n");
 	printf("######## Latency ########\n");
 	printf("#########################\n");
-	printf("Secure Deletion Latency     = %19lu ns\n", report->total_delete_time);
-	printf("Data Write Latency          = %19lu ns\n", report->normal.total_write_time);
-	printf("Data Read Latency           = %19lu ns\n", report->normal.total_read_time);
+	printf("Secure Deletion Latency     = %19llu ns\n", report->total_delete_time);
+	printf("Data Write Latency          = %19llu ns\n", report->normal.total_write_time);
+	printf("Data Read Latency           = %19llu ns\n", report->normal.total_read_time);
 	printf("#########################\n");
 	printf("######### Size ##########\n");
 	printf("#########################\n");
-	printf("Accumulated Write Size      = %19lu B\n", report->total_write_size);
-	printf("Accumulated Rewrite Size    = %19lu B\n", report->total_rewrite_size);
-	printf("Accumulated Reread Size     = %19lu B\n", report->total_reread_size);
+	printf("Accumulated Write Size      = %19llu B\n", report->total_write_size);
+	printf("Accumulated Rewrite Size    = %19llu B\n", report->total_rewrite_size);
+	printf("Accumulated Reread Size     = %19llu B\n", report->total_reread_size);
 	printf("#########################\n");
 	printf("Secure Deletion:\n");
-	printf("Accumulated Write Size      = %19lu B\n", report->total_delete_write_size);
-	printf("Accumulated Rewrite Size    = %19lu B\n", report->total_delete_rewrite_size);
-	printf("Accumulated Reread Size     = %19lu B\n", report->total_delete_reread_size);
+	printf("Accumulated Write Size      = %19llu B\n", report->total_delete_write_size);
+	printf("Accumulated Rewrite Size    = %19llu B\n", report->total_delete_rewrite_size);
+	printf("Accumulated Reread Size     = %19llu B\n", report->total_delete_reread_size);
 	printf("#########################\n");
-	printf("Total Write Block Size      = %19lu B\n", report->normal.total_write_block_size);
-	printf("Total Read Block Size       = %19lu B\n", report->normal.total_read_block_size);
-	printf("Total Delete Block Size     = %19lu B\n", report->total_delete_write_block_size);
+	printf("Total Write Block Size      = %19llu B\n", report->normal.total_write_block_size);
+	printf("Total Read Block Size       = %19llu B\n", report->normal.total_read_block_size);
+	printf("Total Delete Block Size     = %19llu B\n", report->total_delete_write_block_size);
 	printf("#########################\n");
 	printf("Storage usage               = %19.2f %%\n", usage);
 	printf("End\n");
@@ -399,34 +408,38 @@ int main(int argc, char **argv)
 	fprintf(fp, "#########################\n");
 	fprintf(fp, "######## Latency ########\n");
 	fprintf(fp, "#########################\n");
-	fprintf(fp, "Secure Deletion Latency     = %19lu ns\n", report->total_delete_time);
-	fprintf(fp, "Data Write Latency          = %19lu ns\n", report->normal.total_write_time);
-	fprintf(fp, "Data Read Latency           = %19lu ns\n", report->normal.total_read_time);
+	fprintf(fp, "Secure Deletion Latency     = %19llu ns\n", report->total_delete_time);
+	fprintf(fp, "Data Write Latency          = %19llu ns\n", report->normal.total_write_time);
+	fprintf(fp, "Data Read Latency           = %19llu ns\n", report->normal.total_read_time);
 	fprintf(fp, "#########################\n");
 	fprintf(fp, "######### Size ##########\n");
 	fprintf(fp, "#########################\n");
-	fprintf(fp, "Accumulated Write Size      = %19lu B\n", report->total_write_size);
-	fprintf(fp, "Accumulated Rewrite Size    = %19lu B\n", report->total_rewrite_size);
-	fprintf(fp, "Accumulated Reread Size     = %19lu B\n", report->total_reread_size);
+	fprintf(fp, "Accumulated Write Size      = %19llu B\n", report->total_write_size);
+	fprintf(fp, "Accumulated Rewrite Size    = %19llu B\n", report->total_rewrite_size);
+	fprintf(fp, "Accumulated Reread Size     = %19llu B\n", report->total_reread_size);
 	fprintf(fp, "#########################\n");
 	fprintf(fp, "Secure Deletion:\n");
-	fprintf(fp, "Accumulated Write Size      = %19lu B\n", report->total_delete_write_size);
-	fprintf(fp, "Accumulated Rewrite Size    = %19lu B\n", report->total_delete_rewrite_size);
-	fprintf(fp, "Accumulated Reread Size     = %19lu B\n", report->total_delete_reread_size);
+	fprintf(fp, "Accumulated Write Size      = %19llu B\n", report->total_delete_write_size);
+	fprintf(fp, "Accumulated Rewrite Size    = %19llu B\n", report->total_delete_rewrite_size);
+	fprintf(fp, "Accumulated Reread Size     = %19llu B\n", report->total_delete_reread_size);
 	fprintf(fp, "#########################\n");
-	fprintf(fp, "Total Write Block Size      = %19lu B\n", report->normal.total_write_block_size);
-	fprintf(fp, "Total Read Block Size       = %19lu B\n", report->normal.total_read_block_size);
-	fprintf(fp, "Total Delete Block Size     = %19lu B\n", report->total_delete_write_block_size);
+	fprintf(fp, "Total Write Block Size      = %19llu B\n", report->normal.total_write_block_size);
+	fprintf(fp, "Total Read Block Size       = %19llu B\n", report->normal.total_read_block_size);
+	fprintf(fp, "Total Delete Block Size     = %19llu B\n", report->total_delete_write_block_size);
 	fprintf(fp, "#########################\n");
 	fprintf(fp, "Storage usage               = %19.2f  %%\n", usage);
 	fprintf(fp, "End\n");
 #endif
 	// DEDU_createBlockSwap(&d, 0, 8);
 	// d.d_op->DEDU_write(&d, 4, 1, "fb:ed:91:2b:8d:86");
-	output_ltp_table(&d);
-	output_ptt_table(&d);
-	output_disk_info(&d);
-	end_disk(&d);
+	output_ltp_table(d);
+	output_ptt_table(d);
+	output_disk_info(d);
+	end_disk(d);
+	// output_ltp_table(&d);
+	// output_ptt_table(&d);
+	// output_disk_info(&d);
+	// end_disk(&d);
 	if (fp != NULL)
 		fclose(fp);
 	return 0;

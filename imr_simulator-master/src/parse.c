@@ -13,7 +13,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         int operation;
         char hash[20];
         uint64_t size, lba;
-        sscanf(line, "%d,%s ,%ld,%ld", &operation, hash, &size, &lba);
+        sscanf(line, "%d,%s ,%llu,%llu", &operation, hash, &size, &lba);
         report->ins_count++;
         num_of_use_block = size / BLOCK_SIZE;
         if (size % BLOCK_SIZE > 0)
@@ -26,9 +26,16 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         switch (operation)
         {
         case 2:
+#ifdef NEW_ALLOC
+            report->write_ins_count++;
+            printf("line_cnt: %d\n", line_cnt);
+            d->d_op->new_alloc(d, lba, num_of_use_block, hash, line_cnt);
+            break;
+#else
             report->write_ins_count++;
             d->d_op->DEDU_write(d, lba, num_of_use_block, hash, line_cnt);
             break;
+#endif
         case 3:
             report->delete_ins_count++;
             d->d_op->DEDU_remove(d, lba, num_of_use_block, hash);
@@ -42,5 +49,5 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         }
         line_cnt += 1;
     }
-    printf("block size = %ld\n", BLOCK_SIZE);
+    printf("block size = %lu\n", BLOCK_SIZE);
 }

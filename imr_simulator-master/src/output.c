@@ -8,7 +8,7 @@ void output_ltp_table(struct disk *d)
     fprintf(output, "lba,hash,pba,trim,valid\n");
     for (uint64_t i = 0; i < d->report.max_logical_block_num; i++)
     {
-        fprintf(output, "%ld,%s,%lu,", i, entry[i].hash, entry[i].pba);
+        fprintf(output, "%llu,%s,%lu,", i, entry[i].hash, entry[i].pba);
         if (entry[i].trim == true)
             fprintf(output, "True,");
         else
@@ -27,7 +27,7 @@ void output_ptt_table(struct disk *d)
     fprintf(output, "pba, tba, scp_pba, type\n");
     for (uint64_t i = 0; i < d->report.max_block_num; i++)
     {
-        fprintf(output, "%ld, %lu, %lu,", i, entry[i].tba, entry[i].scp_pba);
+        fprintf(output, "%llu, %lu, %lu,", i, entry[i].tba, entry[i].scp_pba);
         switch (entry[i].type)
         {
         case 0:
@@ -56,7 +56,7 @@ void output_disk_info(struct disk *d)
     fprintf(output, "pba,hash,lba_capacity,referenced_count,lba,status\n");
     for (uint64_t i = 0; i < d->report.max_block_num; i++)
     {
-        fprintf(output, "%ld,%s,%u,%u,", i, track[i].hash, track[i].lba_capacity, track[i].referenced_count);
+        fprintf(output, "%llu,%s,%u,%u,", i, track[i].hash, track[i].lba_capacity, track[i].referenced_count);
         for (unsigned j = 0; j < track[i].referenced_count + 1; j++)
         {
             fprintf(output, "%lu ", track[i].lba[j]);

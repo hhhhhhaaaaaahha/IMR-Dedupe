@@ -26,7 +26,7 @@ unsigned long find_empty_block_swap(struct disk *d)
             pba = i;
         }
     }
-    // printf("pba = %ld\n", pba);
+    // printf("pba = %llu\n", pba);
     // printf("referced_count = %d\n", d->storage[pba].referenced_count);
     // if (d->storage[pba].status == status_in_use)
     //     printf("yes\n");
@@ -68,14 +68,14 @@ void createBlockSwap(struct disk *d, unsigned long bba, unsigned long tba)
     tle->scp_pba = bba;
 #endif
     // FILE *e = fopen("report/block_swap_record.txt", "a");
-    // fprintf(e, "%ld\n", bba);
+    // fprintf(e, "%llu\n", bba);
     // fclose(e);
     d->report.current_block_swap_count++;
 
     assert(d->storage[tba].status == status_in_use);
     // assert(d->storage[tba].referenced_count > 0);
-    // printf("tba = %ld\n", tba);
-    // printf("bba = %ld\n", bba);
+    // printf("tba = %llu\n", tba);
+    // printf("bba = %llu\n", bba);
     // #ifdef TRIM
     //     if (d->storage[bba].status == status_trimed)
     //     {

@@ -18,7 +18,7 @@ TETFLAGS = src/lba.c src/active_swap.c src/parse.c src/top_buffer.c src/scp.c sr
 .PHONY: clean dirs valgrind dedupe_write cmr nodedupe dedupeorigin trim gtest
 # zalloc topbuffer blockswap vg blockswap_virtual
 # all:gtest
-all: nodedupe dedupeorigin dedupe_write trim  trim_v2
+all: clean new_alloc # nodedupe dedupeorigin dedupe_write  # trim  trim_v2
 
 gtest:
 	$(CXX) $(CPPFLAGS) -DDEDU_WRITE test/ut_main.cpp -o bin/ut_all $(GTESTGLAGS) $(LDFLAGS) $(TETFLAGS)
@@ -32,11 +32,14 @@ dedupeorigin: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 dedupe_write: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
 	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE test/main.c -o bin/dedupewrite $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
-trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+new_alloc: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DNEW_ALLOC test/main.c -o bin/new_alloc $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
-trim_v2: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
-	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM -DTRIM_V2 test/main.c -o bin/trim_v2 $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+# trim: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+# 	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM test/main.c -o bin/trim $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
+
+# trim_v2: $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS) dirs
+# 	$(CC) $(CFLAGS) $(LDFLAGS) -DDEDU_WRITE -DTRIM -DTRIM_V2 test/main.c -o bin/trim_v2 $(OBJS) $(TOP_BUFFER_OBJS) $(BLOCK_SWAP_OBJS)
 
 
 
@@ -123,7 +126,7 @@ dirs:
 	mkdir -p random
 
 clean:
-	rm -f bin/*
+	rm -rf bin/*
 .PHONY: normalrun val randomrun nodeduperun run test_delete
 EXE = blockswap
 CSV = csv/
@@ -137,7 +140,13 @@ REPORT = report/
 TXTEXTEN = .txt
 DISKSIZE = 1100
 
-run: trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
+run: new_alloc_run # trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
+
+new_alloc_run: bin/new_alloc
+	./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/new_alloc-user000_new_420.txt -s 420 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/new_alloc-user000_new_470.txt -s 470 -l 2000
+	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/new_alloc-user000_new_763.txt -s 763 -l 2000
+
 
 nodeduperun: bin/nodedupe
 	# ./bin/nodedupe -d -i ../trace/user000.csv -o report/ray/user000/425/nodedupe-user000_425.txt -s 425 -l 2000

@@ -27,8 +27,8 @@ unsigned long lba_to_tba(struct disk *d, unsigned long lba);
 
 unsigned long pba_search_jfs(struct disk *d, unsigned long lba, unsigned long fid);
 #ifdef DEDU_ORIGIN
-void DEDU_update_ltp_table(struct disk *d, unsigned long lba, unsigned pba, char *hash);
-unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt);
-unsigned long DEDU_find_next_pba(struct disk *d, unsigned long t, char *hash);
+void dedupe_update_ltp_table(struct disk *d, unsigned long lba, unsigned pba, char *hash);
+unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt, bool dedupe);
+unsigned long dedupe_find_next_pba(struct disk *d, unsigned long t, char *hash, bool dedupe);
 void DEDU_delete_ltp_table(struct disk *d, unsigned long lba);
 #endif

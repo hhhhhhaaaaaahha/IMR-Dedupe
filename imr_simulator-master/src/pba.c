@@ -26,18 +26,16 @@
 #elif defined DEDU_WRITE
 #include "block_swap.h"
 #endif
-// #include <iostream>
-// using namespace std;
 
-bool phase1_is_full = false;
 bool initialized = false;
+// bool phase1_is_full = false;
 #ifdef DEDU_ORIGIN
 extern FILE *fp;
 #endif
 extern jmp_buf env;
 
 #ifdef ZALLOC
-unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned long fid)
+unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned long fid, bool dedupe)
 {
     struct zalloc_info *zinfo = &d->zinfo;
     unsigned long track, pba;
@@ -49,8 +47,11 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
         switch (phases)
         {
         case zalloc_phase1:
+#ifdef NEW_ALLOC
+        {
+            struct report *report = &d->report;
             /* sequential search */
-            if (phase1_is_full)
+            if (zinfo->phase1_is_full)
             {
                 for (size_t i = zinfo->phase1_start; i <= zinfo->phase1_end; i += 2)
                 {
@@ -59,7 +60,57 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                     {
                         d->storage[pba].status = status_booked;
                         zinfo->current_track = i;
-                        phase1_is_full = false;
+                        zinfo->phase1_is_full = false;
+                        return pba;
+                    }
+                }
+                printf("\nPhase2!\n");
+                fprintf(fp, "\nPhase2!\n");
+                zinfo->phases = zalloc_phase2;
+                zinfo->current_track = zinfo->phase2_start;
+                enable_top_buffer = true;
+            }
+            if (report->next_bottom_to_write == zinfo->phase1_end)
+            {
+                zinfo->phase1_is_full = true;
+            }
+            else
+            {
+                if (dedupe)
+                {
+                    track = report->next_bottom_to_write;
+                    report->next_bottom_to_write += 2;
+                }
+                else
+                {
+                    if (report->next_top_to_write + 1 < report->next_bottom_to_write)
+                    {
+                        /* can assign to top track */
+                        track = report->next_top_to_write;
+                        report->next_top_to_write += 2;
+                    }
+                    else
+                    {
+                        track = report->next_bottom_to_write;
+                        report->next_bottom_to_write += 2;
+                    }
+                }
+
+                zinfo->current_track += 2;
+            }
+        }
+#else
+            /* sequential search */
+            if (zinfo->phase1_is_full)
+            {
+                for (size_t i = zinfo->phase1_start; i <= zinfo->phase1_end; i += 2)
+                {
+                    pba = i;
+                    if (storage_is_free(d, i))
+                    {
+                        d->storage[pba].status = status_booked;
+                        zinfo->current_track = i;
+                        zinfo->phase1_is_full = false;
                         return pba;
                     }
                 }
@@ -71,13 +122,14 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
             }
             if (track == zinfo->phase1_end)
             {
-                phase1_is_full = true;
+                zinfo->phase1_is_full = true;
             }
             else
             {
                 zinfo->current_track += 2;
             }
-            break;
+#endif
+        break;
         case zalloc_phase2:
             if (track == zinfo->phase2_end)
             {
@@ -112,7 +164,7 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                     continue;
                 }
 #endif
-                printf("current top buffer count: %ld\n", d->report.current_top_buffer_count);
+                printf("current top buffer count: %llu\n", d->report.current_top_buffer_count);
                 perror("Error: disk is full. Can't find next empty block.");
                 output_disk_info(d);
                 output_ltp_table(d);
@@ -205,6 +257,7 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
     return -1;
 }
 #endif
+
 // 把當下要做的block的status改成status_booked，並把該block的index回傳
 unsigned long native_find_next_pba(struct disk *d, unsigned long t, unsigned long fid)
 {
@@ -266,7 +319,7 @@ unsigned long find_next_pba_jfs(struct disk *d, unsigned long t, unsigned long f
             t, fid);
     exit(EXIT_FAILURE);
 #elif defined(ZALLOC_JOURNAL_VIRTUAL)
-    return zalloc_find_next_pba(d, t, fid);
+    return zalloc_find_next_pba(d, t, fid, 0);
 #elif defined(ZALLOC)
     return zalloc_journal_get_block(d, t, fid);
 #else
@@ -277,7 +330,7 @@ unsigned long find_next_pba_jfs(struct disk *d, unsigned long t, unsigned long f
 unsigned long find_next_pba(struct disk *d, unsigned long t, unsigned long fid)
 {
 #ifdef ZALLOC
-    return zalloc_find_next_pba(d, t, fid);
+    return zalloc_find_next_pba(d, t, fid, 0);
 #elif defined(VIRTUAL_GROUPS)
     return isd_find_next_pba(d, t, fid);
 #else
@@ -317,7 +370,7 @@ int pba_delete(struct disk *d, b_table_head_t *h)
     for (size_t i = 0; i < bbh->size; i++) // 跑迴圈，跑所有的block table裡面的entry
     {
         unsigned long pba = bbh->table[i].pba; // pba = 當下這個迴圈的h->block.head.table的pba
-        // printf("pba=%ld, %s\n", pba, d->storage[pba].hash);
+        // printf("pba=%llu, %s\n", pba, d->storage[pba].hash);
         chs_delete(d, pba); // 呼叫chs_write這個function
     }
     d->report.total_delete_write_block_size += sum * BLOCK_SIZE; // d->report.total_delete_write_actual_size再加上sum * SECTOR_SIZE，也就是加上這次實際總共刪除的大小
@@ -435,7 +488,7 @@ void DEDU_delete_ltp_table(struct disk *d, unsigned long lba)
 {
     d->ltp_table_head->table[lba].pba = 0;
 }
-void DEDU_update_ltp_table(struct disk *d, unsigned long lba, unsigned pba, char *hash)
+void dedupe_update_ltp_table(struct disk *d, unsigned long lba, unsigned pba, char *hash)
 {
     d->ltp_table_head->table[lba].pba = pba;
     d->ltp_table_head->table[lba].valid = true;
@@ -448,11 +501,11 @@ unsigned long DEDU_native_find_next_pba(struct disk *d, unsigned long t, char *h
     d->dinfo.current_track++;
     return d->dinfo.current_track - 1;
 }
-unsigned long DEDU_find_next_pba(struct disk *d, unsigned long t, char *hash)
+unsigned long dedupe_find_next_pba(struct disk *d, unsigned long t, char *hash, bool dedupe)
 {
 
 #ifdef ZALLOC
-    return zalloc_find_next_pba(d, t, 0);
+    return zalloc_find_next_pba(d, t, 0, dedupe);
 #else
     return DEDU_native_find_next_pba(d, t, hash);
 #endif
@@ -621,7 +674,7 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
                 tba = DEDU_run_block_swap(d, pba);
                 if ((signed)tba != -1)
                 {
-                    DEDU_update_ltp_table(d, lba, tba, hash); // 改
+                    dedupe_update_ltp_table(d, lba, tba, hash); // 改
                     return tba;
                 }
             }
@@ -669,7 +722,7 @@ void do_some_top_buffer_stuff(struct disk *d, unsigned long lba, unsigned long *
 #endif
 }
 
-unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt)
+unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt, bool dedupe)
 {
     // printf("line cnt= %d\n", line_cnt);
     unsigned long pba;
@@ -681,7 +734,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
         DEDU_is_lba_trimed: assign pba in ltp_table[lba] to pba, and return whether ltp_entry is trimed.
         DEDU_is_lba_valid:  assign pba in ltp_table[lba] to pba,
                             and return whether block[pba] is in use,
-                            ltp_entry is valid and ltp_entry.hash == hash.
+                            and ltp_entry is valid.
     */
     if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
     {
@@ -696,11 +749,11 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
             // 要另行將新的 hash 寫入 ltp_entry 中
             if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
             {
-                DEDU_update_ltp_table(d, lba, pba, hash);
+                dedupe_update_ltp_table(d, lba, pba, hash);
             }
 #else
             do_some_top_buffer_stuff(d, lba, &pba);
-            DEDU_update_ltp_table(d, lba, pba, hash);
+            dedupe_update_ltp_table(d, lba, pba, hash);
 #endif
         }
         else
@@ -720,11 +773,11 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
                     d->storage[pba].referenced_count++;
                 }
             }
-            DEDU_update_ltp_table(d, lba, pba, hash);
+            dedupe_update_ltp_table(d, lba, pba, hash);
             return pba;
         }
 #endif
-        DEDU_update_ltp_table(d, lba, pba, hash);
+        dedupe_update_ltp_table(d, lba, pba, hash);
         return pba;
     }
 #ifdef DEDU_WRITE
@@ -740,7 +793,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
             // 要另行將新的 hash 寫入 ltp_entry 中
             if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
             {
-                DEDU_update_ltp_table(d, lba, pba, hash);
+                dedupe_update_ltp_table(d, lba, pba, hash);
             }
         }
         else
@@ -756,7 +809,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
         if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
         {
             do_some_top_buffer_stuff(d, lba, &pba);
-            DEDU_update_ltp_table(d, lba, pba, hash);
+            dedupe_update_ltp_table(d, lba, pba, hash);
         }
         else
         {
@@ -778,7 +831,7 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
     // lba 第一次被寫入，且 hash 值已存在於 pba 中
     if (is_in_storage_flag && !is_ltp_mapping_flag)
     {
-        DEDU_update_ltp_table(d, lba, pba, hash);
+        dedupe_update_ltp_table(d, lba, pba, hash);
         // 檢查存在該 hash 的 pba 是否為 trimed，若不是，則 referenced_count++
         if (d->storage[pba].status != status_trimed)
         {
@@ -787,9 +840,15 @@ unsigned long DEDU_pba_search(struct disk *d, unsigned long lba, char *hash, boo
         return pba;
     }
 #endif
+
     // lba 與 hash 皆第一次被寫入
-    pba = DEDU_find_next_pba(d, lba, hash);
-    DEDU_update_ltp_table(d, lba, pba, hash);
+    pba = dedupe_find_next_pba(d, lba, hash, dedupe);
+    dedupe_update_ltp_table(d, lba, pba, hash);
+#ifdef NEW_ALLOC
+    if (d->zinfo.phases == zalloc_phase1)
+    {
+    }
+#endif
     return pba;
 }
 #endif

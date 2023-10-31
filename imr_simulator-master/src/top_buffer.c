@@ -95,8 +95,8 @@ unsigned long run_top_buffer(struct disk *d, unsigned long bba)
     if (!find_empty_top_buffer(d, &tba))
     {
 #ifdef TOP_BUFFER
-        printf("current_top_buffer_count = %ld\n", d->report.current_top_buffer_count);
-        printf("max_top_buffer_num = %ld\n", d->report.max_top_buffer_num);
+        printf("current_top_buffer_count = %llu\n", d->report.current_top_buffer_count);
+        printf("max_top_buffer_num = %llu\n", d->report.max_top_buffer_num);
 #endif
         fprintf(stderr, "Error: can't find any free top block.\n");
         output_disk_info(d);
