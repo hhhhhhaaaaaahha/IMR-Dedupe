@@ -23,12 +23,12 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         // 	delete_all_bottom_track(d);
         // 	is_delete = true;
         // }
+        printf("line_cnt: %d\n", line_cnt);
         switch (operation)
         {
         case 2:
 #ifdef NEW_ALLOC
             report->write_ins_count++;
-            printf("line_cnt: %d\n", line_cnt);
             d->d_op->new_alloc(d, lba, num_of_use_block, hash, line_cnt);
             break;
 #else

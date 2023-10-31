@@ -177,6 +177,7 @@ struct report
     uint64_t next_bottom_to_write;
     uint32_t used_buffer_count;
     bool buffer_is_full;
+    bool buffer_flushed;
 #ifdef VIRTUAL_GROUPS
     uint64_t dual_swap_count;
 #endif

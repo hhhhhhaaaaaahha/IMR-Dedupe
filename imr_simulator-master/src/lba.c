@@ -94,11 +94,23 @@ int init_disk(struct disk *disk, int physical_size, int logical_size)
     }
     memset(p, 0, P1_BUF_NUM * sizeof(*disk->phase1_buf));
     disk->phase1_buf = (struct buffer_block *)p;
+    for (size_t i = 0; i < P1_BUF_NUM; i++)
+    {
+        p = malloc(5 * sizeof(unsigned long));
+        if (!p)
+        {
+            goto done_phase1_buffer;
+        }
+        memset(p, 0, 5 * sizeof(unsigned long));
+        disk->phase1_buf[i].lba = (struct buffer_block *)p;
+        disk->phase1_buf[i].lba_capacity = 4;
+    }
     /* state variables */
     report->used_buffer_count = 0;
     report->next_bottom_to_write = 0;
     report->next_top_to_write = 1;
     report->buffer_is_full = false;
+    report->buffer_flushed = false;
 
     /* Initialize lba to pba table head*/
     p = malloc(sizeof(*disk->ltp_table_head));
@@ -703,7 +715,15 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
         entry[lba].valid = false;
 
         unsigned long pba = lba_to_pba(d, lba);
-        assert(d->storage[pba].status == status_in_use);
+        // assert(d->storage[pba].status == status_in_use);
+        if (d->storage[pba].status != status_in_use)
+        {
+            fprintf(stderr, "block status: %d\n", d->storage[pba].status);
+            output_disk_info(d);
+            output_ltp_table(d);
+            output_ptt_table(d);
+            exit(EXIT_FAILURE);
+        }
 
         bool is_sucess_delete_lba_in_storage = delete_lba_in_storage(d, pba, lba);
         if (!is_sucess_delete_lba_in_storage)
@@ -737,7 +757,7 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
 // #ifdef ZALLOC
 void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt)
 {
-    printf("line: %d", line_cnt);
+    // printf("line: %d\n", line_cnt);
     size_t num_invalid = 0;
     struct report *report = &d->report;
     bool pass = false;
@@ -762,9 +782,15 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
         if (d->zinfo.phases == zalloc_phase1)
         {
             buffer_write(d, lba, hash);
+            return;
         }
         else
         {
+            if (!report->buffer_flushed)
+            {
+                buffer_flush(d);
+                report->buffer_flushed = true;
+            }
             unsigned long pba;
             pba = dedupe_pba_search(d, lba + i, hash, &pass, line_cnt, 0);
             assert(pba < d->report.max_block_num);
@@ -827,17 +853,20 @@ void buffer_write(struct disk *d, unsigned long lba, char *hash)
 
     // cannot dedupe, write into a new slot
     d->phase1_buf[d->report.used_buffer_count].lba[0] = lba;
+    // printf("Checked.\n");
     strcpy(d->phase1_buf[d->report.used_buffer_count].hash, hash);
     d->report.used_buffer_count++;
 
     if (d->report.used_buffer_count == P1_BUF_NUM)
     {
         buffer_flush(d);
+        d->report.used_buffer_count = 0;
     }
 }
 
 void buffer_flush(struct disk *d)
 {
+    // printf("buffer_flush called.\n");
 
     for (size_t i = 0; i < P1_BUF_NUM; i++)
     {
@@ -894,8 +923,17 @@ void buffer_flush(struct disk *d)
                 batch_add(d, pba, &gbtable);
             }
         }
+
+        /* reset block */
+        block->dedupe = false;
+        strcpy(block->hash, "");;
+        for (size_t i = 0 ; i <= block->referenced_count ; i++)
+        {
+            block->lba[i] = 0;
+        }
+        block->referenced_count = 0;
+        batch_write(d, &gbtable);
     }
-    batch_write(d, &gbtable);
     d->report.used_buffer_count = 0;
 }
 // #endif
