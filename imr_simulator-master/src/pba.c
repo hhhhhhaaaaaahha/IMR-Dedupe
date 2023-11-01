@@ -70,34 +70,25 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                 zinfo->current_track = zinfo->phase2_start;
                 enable_top_buffer = true;
             }
-            if (report->next_bottom_to_write == zinfo->phase1_end)
+            if (report->next_bottom_to_write >= zinfo->phase1_end)
             {
                 zinfo->phase1_is_full = true;
             }
             else
             {
-                if (dedupe)
+                if (!dedupe && (report->next_top_to_write + 1 < report->next_bottom_to_write))
+                {
+                    /* can assign to top track */
+                    track = report->next_top_to_write;
+                    report->next_top_to_write += 2;
+                }
+                else
                 {
                     track = report->next_bottom_to_write;
                     report->next_bottom_to_write += 2;
                 }
-                else
-                {
-                    if (report->next_top_to_write + 1 < report->next_bottom_to_write)
-                    {
-                        /* can assign to top track */
-                        track = report->next_top_to_write;
-                        report->next_top_to_write += 2;
-                    }
-                    else
-                    {
-                        track = report->next_bottom_to_write;
-                        report->next_bottom_to_write += 2;
-                    }
-                }
-
-                zinfo->current_track += 2;
             }
+            break;
         }
 #else
             /* sequential search */
@@ -128,8 +119,8 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
             {
                 zinfo->current_track += 2;
             }
+            break;
 #endif
-        break;
         case zalloc_phase2:
             if (track == zinfo->phase2_end)
             {
@@ -565,10 +556,21 @@ bool DEDU_is_lba_valid(struct disk *d, unsigned long lba, char *hash, unsigned l
     }
     return false; // 不是的話就return false
 }
-#ifndef NO_DEDU
+// #ifndef NO_DEDU
 bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
 {
 #ifdef ZALLOC
+#ifdef NEW_ALLOC
+    for (uint64_t i = 0; i < d->report.max_block_num; i++)
+    {
+        if (strcmp(d->storage[i].hash, hash) == 0)
+        {
+            *pba = i;
+            return true;
+        }
+    }
+    return false;
+#else
     zalloc_phases phase = d->zinfo.phases;
     uint64_t phase1_total_block_num = (d->report.max_track_num % 2 == 0) ? (d->report.max_track_num / 2) : (d->report.max_track_num / 2 + 1);
     if (phase == zalloc_phase1)
@@ -598,6 +600,7 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
         }
     }
     return false;
+#endif
 #else
     for (uint64_t i = 0; i < d->report.current_use_block_num; i++)
     {
@@ -612,7 +615,7 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
     return false;
 #endif
 }
-#endif
+// #endif
 
 #ifdef ZALLOC
 unsigned long find_swapped_pba(struct disk *d, char *hash, unsigned long pba, int line_cnt)

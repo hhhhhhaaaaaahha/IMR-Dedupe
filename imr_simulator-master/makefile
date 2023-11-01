@@ -143,7 +143,11 @@ DISKSIZE = 1100
 run: new_alloc_run # trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
 
 new_alloc_run: bin/new_alloc
-	./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/new_alloc-user000_new_420.txt -s 420 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/new_alloc-normal_10_37.txt -s 37 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/new_alloc-normal_10_43.txt -s 43 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/new_alloc-normal_10_68.txt -s 68 -l 2000
+
+	# ./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/new_alloc-user000_new_420.txt -s 420 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/new_alloc-user000_new_470.txt -s 470 -l 2000
 	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/new_alloc-user000_new_763.txt -s 763 -l 2000
 

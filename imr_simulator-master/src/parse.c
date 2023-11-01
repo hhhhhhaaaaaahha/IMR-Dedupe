@@ -23,7 +23,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         // 	delete_all_bottom_track(d);
         // 	is_delete = true;
         // }
-        printf("line_cnt: %d\n", line_cnt);
+        // printf("line_cnt: %d\n", line_cnt);
         switch (operation)
         {
         case 2:

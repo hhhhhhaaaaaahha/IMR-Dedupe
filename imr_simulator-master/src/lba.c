@@ -102,14 +102,13 @@ int init_disk(struct disk *disk, int physical_size, int logical_size)
             goto done_phase1_buffer;
         }
         memset(p, 0, 5 * sizeof(unsigned long));
-        disk->phase1_buf[i].lba = (struct buffer_block *)p;
+        disk->phase1_buf[i].lba = (unsigned long *)p;
         disk->phase1_buf[i].lba_capacity = 4;
     }
     /* state variables */
     report->used_buffer_count = 0;
     report->next_bottom_to_write = 0;
     report->next_top_to_write = 1;
-    report->buffer_is_full = false;
     report->buffer_flushed = false;
 
     /* Initialize lba to pba table head*/
@@ -781,7 +780,53 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
     {
         if (d->zinfo.phases == zalloc_phase1)
         {
-            buffer_write(d, lba, hash);
+
+            unsigned long pba;
+            // bool is_in_storage_flag = is_in_storage(d, hash, &pba);
+            bool is_in_storage_flag = false;
+            for (uint64_t i = 0; i < d->report.max_block_num; i++)
+            {
+                if (strcmp(d->storage[i].hash, hash) == 0)
+                {
+                    pba = i;
+                    is_in_storage_flag = true;
+                    break;
+                }
+            }
+            // 檢查 ltp_entry 是否 valid
+            bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);
+
+            // lba 第一次被寫入，且 hash 值已存在於 pba 中
+            if (is_in_storage_flag && !is_ltp_mapping_flag)
+            {
+                dedupe_update_ltp_table(d, lba, pba, hash);
+                // 檢查存在該 hash 的 pba 是否為 trimed，若不是，則 referenced_count++
+                if (d->storage[pba].status != status_trimed)
+                {
+                    d->storage[pba].referenced_count++;
+                }
+                if (strcmp(hash, d->storage[pba].hash) != 0)
+                {
+                    fprintf(stderr, "%s will be write\n", hash);
+                    fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
+                    fprintf(stderr, "lba = %lu\n", lba);
+                    fprintf(stderr, "pba = %lu\n", pba);
+                    output_disk_info(d);
+                    output_ltp_table(d);
+                    output_ptt_table(d);
+                    exit(EXIT_FAILURE);
+                }
+                unsigned referenced_count = d->storage[pba].referenced_count;
+                if (referenced_count + 1 > d->storage[pba].lba_capacity)
+                    increase_storage_lba_capacity(d, pba);
+                if (!is_lba_in_storage(d, pba, lba))
+                    d->storage[pba].lba[referenced_count] = lba;
+            }
+            else
+            {
+                buffer_write(d, lba, hash);
+            }
+
             return;
         }
         else
@@ -853,7 +898,6 @@ void buffer_write(struct disk *d, unsigned long lba, char *hash)
 
     // cannot dedupe, write into a new slot
     d->phase1_buf[d->report.used_buffer_count].lba[0] = lba;
-    // printf("Checked.\n");
     strcpy(d->phase1_buf[d->report.used_buffer_count].hash, hash);
     d->report.used_buffer_count++;
 
@@ -926,8 +970,9 @@ void buffer_flush(struct disk *d)
 
         /* reset block */
         block->dedupe = false;
-        strcpy(block->hash, "");;
-        for (size_t i = 0 ; i <= block->referenced_count ; i++)
+        strcpy(block->hash, "");
+        ;
+        for (size_t i = 0; i <= block->referenced_count; i++)
         {
             block->lba[i] = 0;
         }

@@ -56,7 +56,7 @@
 
 #define BLOCK_SIZE TRACK_SIZE
 
-#define P1_BUF_NUM 32
+#define P1_BUF_NUM 32 // origin: 32
 
 #define GB_TO_BYTE(n) ((uint64_t)(n) << 30)
 
@@ -176,7 +176,6 @@ struct report
     uint64_t next_top_to_write;
     uint64_t next_bottom_to_write;
     uint32_t used_buffer_count;
-    bool buffer_is_full;
     bool buffer_flushed;
 #ifdef VIRTUAL_GROUPS
     uint64_t dual_swap_count;
