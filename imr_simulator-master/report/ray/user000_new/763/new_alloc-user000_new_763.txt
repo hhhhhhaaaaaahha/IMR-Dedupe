@@ -6,46 +6,46 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-24.000000 seconds total
+2895.000000 seconds total
 -------------------------
 Disk information:
 
-Size of disk = 43 GB
+Size of disk = 763 GB
 -------------------------
 Transaction information:
 
-Total number of instructions        =           525000 instructions
+Total number of instructions        =          1209141 instructions
 Total number of read instructions   =                0 instructions
-Total number of write instructions  =           500000 instructions
+Total number of write instructions  =          1184141 instructions
 Total number of delete instructions  =            25000 instructions
 Total number of invalid read        =                0 blocks
 Total number of invalid write       =                0 blocks
 Total size of read instructions   =                0 MB
-Total size of write instructions  =             1953 MB
+Total size of write instructions  =             4625 MB
 
-Total block swap count      =                1294 blocks
+Total block swap count      =                2809 blocks
 Total inversion swap count      =                   0 blocks
 #########################
 ######## Latency ########
 #########################
 Secure Deletion Latency     =                   0 ns
-Data Write Latency          =      28259738260082 ns
-Data Read Latency           =         38526626908 ns
+Data Write Latency          =     121163858072464 ns
+Data Read Latency           =         83633149138 ns
 #########################
 ######### Size ##########
 #########################
-Accumulated Write Size      =        673043185664 B
-Accumulated Rewrite Size    =        411673034752 B
-Accumulated Reread Size     =        618836000768 B
+Accumulated Write Size      =       2449314152448 B
+Accumulated Rewrite Size    =       1887227084800 B
+Accumulated Reread Size     =       2859600969728 B
 #########################
 Secure Deletion:
 Accumulated Write Size      =                   0 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =        673043185664 B
-Total Read Block Size       =          2713714688 B
+Total Write Block Size      =       2449314152448 B
+Total Read Block Size       =          5890899968 B
 Total Delete Block Size     =                   0 B
 #########################
-Storage usage               =               79.08  %
+Storage usage               =               50.61  %
 End

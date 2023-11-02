@@ -11,6 +11,7 @@
 #include "lba.h"
 #include "pba.h"
 #include "record_op.h"
+#include "hash_table.h"
 #ifdef BLOCK_SWAP
 #include "block_swap.h"
 #endif
@@ -110,6 +111,16 @@ int init_disk(struct disk *disk, int physical_size, int logical_size)
     report->next_bottom_to_write = 0;
     report->next_top_to_write = 1;
     report->buffer_flushed = false;
+    report->disk_has_dedupe = false;
+
+    // /* Initialize hash table */
+    // p = malloc(block_num * sizeof(struct DataItem*));
+    // if (!p)
+    // {
+    //     goto done_hash_table;
+    // }
+    // memset(p, 0, block_num * sizeof(struct DataItem*));
+    // disk->hash_table = (struct block *)p;
 
     /* Initialize lba to pba table head*/
     p = malloc(sizeof(*disk->ltp_table_head));
@@ -301,6 +312,8 @@ done_ltp_table:
     free(disk->ltp_table_head);
 done_ltp_table_head:
     free(disk->phase1_buf);
+// done_hash_table:
+//     free(disk->hash_table);
 done_phase1_buffer:
     free(disk->storage);
 done_disk_storage:
@@ -892,6 +905,7 @@ void buffer_write(struct disk *d, unsigned long lba, char *hash)
             block->referenced_count++;
             block->lba[block->referenced_count] = lba;
             block->dedupe = true;
+            d->report.disk_has_dedupe = true;
             return;
         }
     }

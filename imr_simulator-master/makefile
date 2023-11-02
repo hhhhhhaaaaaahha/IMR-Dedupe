@@ -1,6 +1,6 @@
 CC=	gcc
 CXX=g++
-OBJS= src/lba.c src/pba.c src/batch.c src/chs.c src/record_op.c src/rw.c src/active_swap.c src/parse.c src/output.c
+OBJS= src/lba.c src/pba.c src/batch.c src/chs.c src/record_op.c src/rw.c src/active_swap.c src/parse.c src/output.c # src/hash_table.c
 		# src/top_buffer.c src/block_swap.c src/scp.c 
 
 TOP_BUFFER_OBJS= src/top_buffer.c src/scp.c
@@ -143,13 +143,13 @@ DISKSIZE = 1100
 run: new_alloc_run # trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
 
 new_alloc_run: bin/new_alloc
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/new_alloc-normal_10_37.txt -s 37 -l 2000
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/new_alloc-normal_10_43.txt -s 43 -l 2000
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/new_alloc-normal_10_68.txt -s 68 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/new_alloc-normal_10_37.txt -s 37 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/new_alloc-normal_10_43.txt -s 43 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/new_alloc-normal_10_68.txt -s 68 -l 2000
 
 	# ./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/new_alloc-user000_new_420.txt -s 420 -l 2000
-	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/new_alloc-user000_new_470.txt -s 470 -l 2000
-	# ./bin/dedupewrite -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/new_alloc-user000_new_763.txt -s 763 -l 2000
+	./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/new_alloc-user000_new_470.txt -s 470 -l 2000
+	./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/new_alloc-user000_new_763.txt -s 763 -l 2000
 
 
 nodeduperun: bin/nodedupe

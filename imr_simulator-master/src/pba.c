@@ -76,9 +76,10 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
             }
             else
             {
-                if (!dedupe && (report->next_top_to_write + 1 < report->next_bottom_to_write))
+                if (!dedupe && (report->next_top_to_write + 1 < report->next_bottom_to_write) && report->disk_has_dedupe)
                 {
                     /* can assign to top track */
+                    // printf("Called.\n");
                     track = report->next_top_to_write;
                     report->next_top_to_write += 2;
                 }
@@ -839,6 +840,7 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
         if (d->storage[pba].status != status_trimed)
         {
             d->storage[pba].referenced_count++;
+            d->report.disk_has_dedupe = true;
         }
         return pba;
     }

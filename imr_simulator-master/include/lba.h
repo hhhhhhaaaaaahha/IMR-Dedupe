@@ -46,6 +46,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// #include "hash_table.h"
+
 #define KILOBYTE 1024UL
 #define MEGABYTE (KILOBYTE * KILOBYTE)
 #define GIGABYTE (KILOBYTE * GIGABYTE)
@@ -177,6 +179,7 @@ struct report
     uint64_t next_bottom_to_write;
     uint32_t used_buffer_count;
     bool buffer_flushed;
+    bool disk_has_dedupe;
 #ifdef VIRTUAL_GROUPS
     uint64_t dual_swap_count;
 #endif
@@ -195,6 +198,8 @@ struct disk
     struct ptt_table_head *ptt_table_head;
 
     struct buffer_block *phase1_buf;
+
+    struct DataItem **hash_table;
 
 #ifdef DEDU_ORIGIN
     struct dedu_info dinfo;
