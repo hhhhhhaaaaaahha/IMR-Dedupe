@@ -227,7 +227,7 @@ struct buffer_block
 {
     char hash[20];
     unsigned long *lba;
-    block_status_t status; /* block status */
+    // block_status_t status; /* block status */
     unsigned lba_capacity;
     unsigned referenced_count;
     bool dedupe;
@@ -312,7 +312,7 @@ int vg_lba_delete(struct disk *d, unsigned long lba, size_t n, unsigned long fid
 #ifdef DEDU_ORIGIN
 bool DEDU_is_ltp_mapping_valid(struct disk *d, unsigned long lba, char *hash);
 int dedupe_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);
-void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash);
+void dedupe_trim(struct disk *d, unsigned long lba, size_t n, char *hash);
 void delete_all_bottom_track(struct disk *d);
 #endif
 void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt);

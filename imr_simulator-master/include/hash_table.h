@@ -6,21 +6,21 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define SIZE 20
+// #define SIZE 20
 
 struct DataItem
 {
-    int pba;
     char hash[20];
+    long long pba;
 };
 
-struct DataItem *hashArray[SIZE];
-struct DataItem *dummyItem;
-struct DataItem *item;
+// struct DataItem *hashArray[SIZE];
+// struct DataItem dummyItem = {.pba = -1, .hash = ""};
+// struct DataItem *item;
 
-int hashCode(char *hash);
-struct DataItem search(struct disk *d, char *hash);
+int hashCode(char *hash, unsigned long size);
+struct DataItem *searchItem(struct disk *d, char *hash);
 void insert(struct disk *d, char *hash, int pba);
-struct DataItem deleteItem(struct disk *d, struct DataItem *item);
+struct DataItem *deleteItem(struct disk *d, char *hash);
 
 #endif

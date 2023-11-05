@@ -1,7 +1,9 @@
 #include <assert.h>
 #include "block_swap.h"
+#include "hash_table.h"
 #include "lba.h"
 #include "rw.h"
+
 bool is_bottom_has_trimed_track = false;
 void block_info_copy(struct block *dest, struct block *src)
 {
@@ -17,9 +19,13 @@ void block_info_swap(struct disk *d, unsigned long from, unsigned long to)
     struct block temp;
     struct block *from_track = &d->storage[from];
     struct block *to_track = &d->storage[to];
+    deleteItem(d, from_track->hash);
+    deleteItem(d, to_track->hash);
     block_info_copy(&temp, to_track);
     block_info_copy(to_track, from_track);
     block_info_copy(from_track, &temp);
+    insert(d, from_track->hash, from);
+    insert(d, to_track->hash, to);
 }
 void print_info(struct disk *d, unsigned long bba, unsigned long tba)
 {

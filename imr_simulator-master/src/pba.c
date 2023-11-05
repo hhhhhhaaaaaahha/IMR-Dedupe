@@ -12,6 +12,7 @@
 #include "batch.h"
 #include "chs.h"
 #include "fid_table.h"
+#include "hash_table.h"
 #include "lba.h"
 #include "list.h"
 #include "op_mode.h"
@@ -79,9 +80,16 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
                 if (!dedupe && (report->next_top_to_write + 1 < report->next_bottom_to_write) && report->disk_has_dedupe)
                 {
                     /* can assign to top track */
-                    // printf("Called.\n");
-                    track = report->next_top_to_write;
-                    report->next_top_to_write += 2;
+                    for (size_t j = 1; j <= report->next_bottom_to_write; j++)
+                    {
+                        if (d->storage[j - 1].referenced_count > 0 && d->storage[j + 1].referenced_count > 0)
+                        {
+                            track = report->next_top_to_write;
+                            break;
+                        }
+                    }
+                    track = report->next_bottom_to_write;
+                    report->next_bottom_to_write += 2;
                 }
                 else
                 {
@@ -228,7 +236,7 @@ unsigned long zalloc_find_next_pba(struct disk *d, unsigned long t, unsigned lon
         {
             unsigned long pre_track = track - 1;
             unsigned long next_track = track + 1;
-            if (d->storage[pre_track].referenced_count > 1 && d->storage[next_track].referenced_count > 1)
+            if (d->storage[pre_track].referenced_count > 0 && d->storage[next_track].referenced_count > 0)
             {
                 if (storage_is_free(d, pba))
                 {
@@ -502,7 +510,7 @@ unsigned long dedupe_find_next_pba(struct disk *d, unsigned long t, char *hash, 
     return DEDU_native_find_next_pba(d, t, hash);
 #endif
 }
-bool DEDU_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
+bool dedupe_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
 {
     unsigned long pba = lba_to_pba(d, lba);
     *p = pba;
@@ -511,7 +519,7 @@ bool DEDU_is_lba_trimed(struct disk *d, unsigned long lba, char *hash, unsigned 
     return false;
 }
 // 檢查lba是不是valid，如果是valid的話透過*p來接找到的pba
-bool DEDU_is_lba_valid(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
+bool dedupe_is_lba_valid(struct disk *d, unsigned long lba, char *hash, unsigned long *p)
 {
     unsigned long pba = lba_to_pba(d, lba); // 透過lba_to_pba這個function來找到對應的pba
     *p = pba;                               // 把pba回傳給p
@@ -562,6 +570,13 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
 {
 #ifdef ZALLOC
 #ifdef NEW_ALLOC
+    // struct DataItem *item = searchItem(d, hash);
+    // if (item != NULL)
+    // {
+    //     *pba = item->pba;
+    //     return true;
+    // }
+    // return false;
     for (uint64_t i = 0; i < d->report.max_block_num; i++)
     {
         if (strcmp(d->storage[i].hash, hash) == 0)
@@ -571,6 +586,7 @@ bool is_in_storage(struct disk *d, char *hash, unsigned long *pba)
         }
     }
     return false;
+
 #else
     zalloc_phases phase = d->zinfo.phases;
     uint64_t phase1_total_block_num = (d->report.max_track_num % 2 == 0) ? (d->report.max_track_num / 2) : (d->report.max_track_num / 2 + 1);
@@ -678,7 +694,7 @@ unsigned long DEDU_update(struct disk *d, unsigned long lba, unsigned long pba, 
                 tba = DEDU_run_block_swap(d, pba);
                 if ((signed)tba != -1)
                 {
-                    dedupe_update_ltp_table(d, lba, tba, hash); // 改
+                    // dedupe_update_ltp_table(d, lba, tba, hash); // 改
                     return tba;
                 }
             }
@@ -728,19 +744,18 @@ void do_some_top_buffer_stuff(struct disk *d, unsigned long lba, unsigned long *
 
 unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, bool *pass, int line_cnt, bool dedupe)
 {
-    // printf("line cnt= %d\n", line_cnt);
     unsigned long pba;
     /*
         以下 flow control 為判斷：
         如果是被刪除的資料或是已經存在的資料，則進行特定操作
         （刪除的資料復原，存在的資料更新）
 
-        DEDU_is_lba_trimed: assign pba in ltp_table[lba] to pba, and return whether ltp_entry is trimed.
-        DEDU_is_lba_valid:  assign pba in ltp_table[lba] to pba,
+        dedupe_is_lba_trimed: assign pba in ltp_table[lba] to pba, and return whether ltp_entry is trimed.
+        dedupe_is_lba_valid:  assign pba in ltp_table[lba] to pba,
                             and return whether block[pba] is in use,
                             and ltp_entry is valid.
     */
-    if (DEDU_is_lba_trimed(d, lba, hash, &pba) && !(DEDU_is_lba_valid(d, lba, hash, &pba)))
+    if (dedupe_is_lba_trimed(d, lba, hash, &pba) && !(dedupe_is_lba_valid(d, lba, hash, &pba)))
     {
 #ifndef NO_DEDU
         // 若 input hash 與 ltp_entry 中的 hash 不同，則代表要重新寫入
@@ -748,17 +763,21 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
         {
 #ifdef DEDU_WRITE
             pba = DEDU_update(d, lba, pba, hash);
+            // deleteItem(d, d->ltp_table_head->table[lba].hash);
+            // insert(d, hash, pba);
 
             // 如果 DEDU_update 沒有執行 block swap 的話，
             // 要另行將新的 hash 寫入 ltp_entry 中
-            if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
-            {
-                dedupe_update_ltp_table(d, lba, pba, hash);
-            }
+            // dedupe_update_ltp_table(d, lba, pba, hash);
+            // if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
+            // {
+            // }
 #else
             do_some_top_buffer_stuff(d, lba, &pba);
             dedupe_update_ltp_table(d, lba, pba, hash);
 #endif
+            dedupe_update_ltp_table(d, lba, pba, hash);
+            return pba;
         }
         else
         {
@@ -766,6 +785,23 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
             if (strcmp(hash, d->storage[pba].hash) != 0)
             {
                 // 重新定位 lba 對應的 pba
+                // #ifdef NEW_ALLOC
+                // struct DataItem *item = searchItem(d, hash);
+                // if (item != NULL)
+                // {
+                //     pba = item->pba;
+                // }
+                // if (d->storage[pba].status != status_trimed)
+                // {
+                //     d->storage[pba].referenced_count++;
+                //     d->report.disk_has_dedupe = true;
+                // }
+                // else
+                // {
+                //     d->storage[pba].status = status_in_use;
+                //     d->storage[pba].lba[0] = lba;
+                // }
+                // #else
                 unsigned long temp = d->report.max_block_num;
                 temp = find_swapped_pba(d, hash, temp, line_cnt);
                 if (temp < d->report.max_block_num)
@@ -775,30 +811,33 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
                 if (d->storage[pba].status != status_trimed)
                 {
                     d->storage[pba].referenced_count++;
+                    d->report.disk_has_dedupe = true;
                 }
+                // #endif
             }
+            *pass = true;
             dedupe_update_ltp_table(d, lba, pba, hash);
             return pba;
         }
 #endif
-        dedupe_update_ltp_table(d, lba, pba, hash);
-        return pba;
     }
 #ifdef DEDU_WRITE
     // 如果 ltp_entry 已有資料，且目前是 valid
-    else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
+    else if (!(dedupe_is_lba_trimed(d, lba, hash, &pba)) && dedupe_is_lba_valid(d, lba, hash, &pba))
     {
         // 若 input 與 ltp_entry 中的 hash 不同，代表要更新；反之，則略過
         if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
         {
             pba = DEDU_update(d, lba, pba, hash);
+            // deleteItem(d, d->ltp_table_head->table[lba].hash);
+            // insert(d, hash, pba);
 
             // 如果 DEDU_update 沒有執行 block swap 的話，
             // 要另行將新的 hash 寫入 ltp_entry 中
-            if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
-            {
-                dedupe_update_ltp_table(d, lba, pba, hash);
-            }
+            dedupe_update_ltp_table(d, lba, pba, hash);
+            // if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
+            // {
+            // }
         }
         else
         {
@@ -807,7 +846,7 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
         return pba;
     }
 #else
-    else if (!(DEDU_is_lba_trimed(d, lba, hash, &pba)) && DEDU_is_lba_valid(d, lba, hash, &pba))
+    else if (!(dedupe_is_lba_trimed(d, lba, hash, &pba)) && dedupe_is_lba_valid(d, lba, hash, &pba))
     {
 #ifndef NO_DEDU
         if (strcmp(d->ltp_table_head->table[lba].hash, hash) != 0)
@@ -842,6 +881,12 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
             d->storage[pba].referenced_count++;
             d->report.disk_has_dedupe = true;
         }
+        else
+        {
+            d->storage[pba].status = status_in_use;
+            d->storage[pba].lba[0] = lba;
+            *pass = true;
+        }
         return pba;
     }
 #endif
@@ -849,11 +894,7 @@ unsigned long dedupe_pba_search(struct disk *d, unsigned long lba, char *hash, b
     // lba 與 hash 皆第一次被寫入
     pba = dedupe_find_next_pba(d, lba, hash, dedupe);
     dedupe_update_ltp_table(d, lba, pba, hash);
-#ifdef NEW_ALLOC
-    if (d->zinfo.phases == zalloc_phase1)
-    {
-    }
-#endif
+    // insert(d, hash, pba);
     return pba;
 }
 #endif

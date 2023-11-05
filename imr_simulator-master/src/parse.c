@@ -18,12 +18,7 @@ void DEDU_parsing_csv(struct disk *d, FILE *stream)
         num_of_use_block = size / BLOCK_SIZE;
         if (size % BLOCK_SIZE > 0)
             num_of_use_block++;
-        // if (!is_delete && operation == 3)
-        // {
-        // 	delete_all_bottom_track(d);
-        // 	is_delete = true;
-        // }
-        // printf("line_cnt: %d\n", line_cnt);
+
         switch (operation)
         {
         case 2:

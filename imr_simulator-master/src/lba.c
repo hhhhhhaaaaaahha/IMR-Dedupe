@@ -42,7 +42,7 @@ struct disk_operations imr_ops =
         .journaling_write = journaling_write,
         .invalid = lba_invalid,
         .DEDU_write = dedupe_lba_write,
-        .DEDU_remove = DEDU_Trim,
+        .DEDU_remove = dedupe_trim,
         .new_alloc = dedupe_lba_write_p1_buf};
 
 int init_disk(struct disk *disk, int physical_size, int logical_size)
@@ -113,14 +113,14 @@ int init_disk(struct disk *disk, int physical_size, int logical_size)
     report->buffer_flushed = false;
     report->disk_has_dedupe = false;
 
-    // /* Initialize hash table */
-    // p = malloc(block_num * sizeof(struct DataItem*));
-    // if (!p)
-    // {
-    //     goto done_hash_table;
-    // }
-    // memset(p, 0, block_num * sizeof(struct DataItem*));
-    // disk->hash_table = (struct block *)p;
+    /* Initialize hash table */
+    p = malloc(block_num * sizeof(struct DataItem *));
+    if (!p)
+    {
+        goto done_hash_table;
+    }
+    memset(p, 0, block_num * sizeof(struct DataItem *));
+    disk->hash_table = (struct DataItem *)p;
 
     /* Initialize lba to pba table head*/
     p = malloc(sizeof(*disk->ltp_table_head));
@@ -312,8 +312,8 @@ done_ltp_table:
     free(disk->ltp_table_head);
 done_ltp_table_head:
     free(disk->phase1_buf);
-// done_hash_table:
-//     free(disk->hash_table);
+done_hash_table:
+    free(disk->hash_table);
 done_phase1_buffer:
     free(disk->storage);
 done_disk_storage:
@@ -665,6 +665,8 @@ int dedupe_lba_write(struct disk *d, unsigned long lba, size_t n, char *hash, in
         {
             if (!pass)
             {
+                deleteItem(d, d->storage[pba].hash);
+                insert(d, hash, pba);
                 d->storage[pba].lba[0] = lba + i;
                 strcpy(d->storage[pba].hash, hash);
                 batch_add(d, pba, &gbtable);
@@ -718,7 +720,7 @@ bool delete_lba_in_storage(struct disk *d, unsigned long pba, unsigned lba)
     return false;
 }
 
-void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
+void dedupe_trim(struct disk *d, unsigned long lba, size_t n, char *hash)
 {
     struct ltp_entry *entry = d->ltp_table_head->table;
     if (entry[lba].valid && strcmp(hash, entry[lba].hash) == 0 && !entry[lba].trim)
@@ -727,7 +729,6 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
         entry[lba].valid = false;
 
         unsigned long pba = lba_to_pba(d, lba);
-        // assert(d->storage[pba].status == status_in_use);
         if (d->storage[pba].status != status_in_use)
         {
             fprintf(stderr, "block status: %d\n", d->storage[pba].status);
@@ -746,6 +747,9 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
             {
                 fprintf(stderr, "In storage lba = %lu\n", d->storage[pba].lba[i]);
             }
+            output_disk_info(d);
+            output_ltp_table(d);
+            output_ptt_table(d);
             exit(EXIT_FAILURE);
         }
 
@@ -769,7 +773,6 @@ void DEDU_Trim(struct disk *d, unsigned long lba, size_t n, char *hash)
 // #ifdef ZALLOC
 void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *hash, int line_cnt)
 {
-    // printf("line: %d\n", line_cnt);
     size_t num_invalid = 0;
     struct report *report = &d->report;
     bool pass = false;
@@ -793,19 +796,9 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
     {
         if (d->zinfo.phases == zalloc_phase1)
         {
-
             unsigned long pba;
-            // bool is_in_storage_flag = is_in_storage(d, hash, &pba);
-            bool is_in_storage_flag = false;
-            for (uint64_t i = 0; i < d->report.max_block_num; i++)
-            {
-                if (strcmp(d->storage[i].hash, hash) == 0)
-                {
-                    pba = i;
-                    is_in_storage_flag = true;
-                    break;
-                }
-            }
+            bool is_in_storage_flag = is_in_storage(d, hash, &pba);
+
             // 檢查 ltp_entry 是否 valid
             bool is_ltp_mapping_flag = DEDU_is_ltp_mapping_valid(d, lba, hash);
 
@@ -817,6 +810,7 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
                 if (d->storage[pba].status != status_trimed)
                 {
                     d->storage[pba].referenced_count++;
+                    d->report.disk_has_dedupe = true;
                 }
                 if (strcmp(hash, d->storage[pba].hash) != 0)
                 {
@@ -839,7 +833,6 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
             {
                 buffer_write(d, lba, hash);
             }
-
             return;
         }
         else
@@ -867,7 +860,7 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
                     exit(EXIT_FAILURE);
                 }
                 unsigned referenced_count = d->storage[pba].referenced_count;
-                if (referenced_count + 1 > d->storage[pba].lba_capacity)
+                if (referenced_count > d->storage[pba].lba_capacity)
                     increase_storage_lba_capacity(d, pba);
                 if (!is_lba_in_storage(d, pba, lba))
                     d->storage[pba].lba[referenced_count] = lba;
@@ -877,6 +870,8 @@ void dedupe_lba_write_p1_buf(struct disk *d, unsigned long lba, size_t n, char *
             {
                 if (!pass)
                 {
+                    deleteItem(d, d->storage[pba].hash);
+                    insert(d, hash, pba);
                     d->storage[pba].lba[0] = lba + i;
                     strcpy(d->storage[pba].hash, hash);
                     batch_add(d, pba, &gbtable);
@@ -895,22 +890,31 @@ void buffer_write(struct disk *d, unsigned long lba, char *hash)
     for (size_t i = 0; i < d->report.used_buffer_count; i++)
     {
         // dedupe
-        if (d->phase1_buf[i].hash == hash)
+        if (strcmp(d->phase1_buf[i].hash, hash) == 0)
         {
             struct buffer_block *block = &d->phase1_buf[i];
-            if (block->referenced_count + 1 > block->lba_capacity)
+            block->referenced_count++;
+            if (block->referenced_count > block->lba_capacity)
             {
                 block->lba_capacity *= 2;
+                block->lba = (unsigned long *)realloc(block->lba, block->lba_capacity * sizeof(unsigned long));
             }
-            block->referenced_count++;
             block->lba[block->referenced_count] = lba;
             block->dedupe = true;
-            d->report.disk_has_dedupe = true;
             return;
         }
     }
 
-    // cannot dedupe, write into a new slot
+    /* init buffer block to write */
+    d->phase1_buf[d->report.used_buffer_count].dedupe = false;
+    strcpy(d->phase1_buf[d->report.used_buffer_count].hash, "");
+    for (size_t i = 0; i <= d->phase1_buf[d->report.used_buffer_count].lba_capacity; i++)
+    {
+        d->phase1_buf[d->report.used_buffer_count].lba[i] = 0;
+    }
+    d->phase1_buf[d->report.used_buffer_count].referenced_count = 0;
+
+    /* write into buffer block */
     d->phase1_buf[d->report.used_buffer_count].lba[0] = lba;
     strcpy(d->phase1_buf[d->report.used_buffer_count].hash, hash);
     d->report.used_buffer_count++;
@@ -924,8 +928,6 @@ void buffer_write(struct disk *d, unsigned long lba, char *hash)
 
 void buffer_flush(struct disk *d)
 {
-    // printf("buffer_flush called.\n");
-
     for (size_t i = 0; i < P1_BUF_NUM; i++)
     {
         struct buffer_block *block = &d->phase1_buf[i];
@@ -933,64 +935,69 @@ void buffer_flush(struct disk *d)
         size_t pba = 0;
 
         /* write data into track */
-        if (block->dedupe)
+        if (dedupe_is_lba_trimed(d, block->lba[0], block->hash, &pba))
         {
-            pba = dedupe_pba_search(d, block->lba[i], block->hash, &pass, 0, block->dedupe);
-            d->storage[pba].referenced_count = block->referenced_count;
-            while (d->storage[pba].lba_capacity < d->storage[pba].referenced_count)
+            if (strcmp(d->ltp_table_head->table[block->lba[0]].hash, block->hash) != 0)
             {
-                increase_storage_lba_capacity(d, pba);
+                pba = DEDU_update(d, block->lba[0], pba, block->hash);
             }
-            for (size_t i = 0; i < block->referenced_count + 1; i++)
+            else
             {
-                d->storage[pba].lba[i] = block->lba[i];
+                if (strcmp(block->hash, d->storage[pba].hash) != 0)
+                {
+                    // 重新定位 lba 對應的 pba
+                    unsigned long position = d->report.max_block_num;
+                    position = find_swapped_pba(d, block->hash, position, 0);
+                    if (position < d->report.max_block_num)
+                    {
+                        pba = position;
+                    }
+                    if (d->storage[pba].status != status_trimed)
+                    {
+                        d->storage[pba].referenced_count++;
+                        unsigned int idx = d->storage[pba].referenced_count;
+                        d->storage[pba].referenced_count += block->referenced_count + 1;
+                        d->report.disk_has_dedupe = true;
+                        while (d->storage[pba].lba_capacity < d->storage[pba].referenced_count + 1)
+                        {
+                            increase_storage_lba_capacity(d, pba);
+                        }
+                        for (size_t j = idx + 1; j < d->storage[pba].referenced_count + 1; j++)
+                        {
+                            d->storage[pba].lba[j] = block->lba[j - idx - 1];
+                            dedupe_update_ltp_table(d, block->lba[j - idx - 1], pba, block->hash);
+                        }
+                        continue;
+                    }
+                }
             }
+        }
+        else if (dedupe_is_lba_valid(d, block->lba[0], block->hash, &pba))
+        {
+            /* update block */
+            pba = DEDU_update(d, block->lba[0], pba, block->hash);
+            deleteItem(d, d->ltp_table_head->table[block->lba[0]].hash);
         }
         else
         {
-            pba = dedupe_pba_search(d, block->lba[0], block->hash, &pass, 0, block->dedupe);
+            pba = dedupe_find_next_pba(d, block->lba[0], block->hash, block->dedupe);
         }
         assert(pba < d->report.max_block_num);
+        deleteItem(d, d->storage[pba].hash);
+        insert(d, block->hash, pba);
 
-        if (d->storage[pba].referenced_count > 0)
+        d->storage[pba].referenced_count = block->referenced_count;
+        strcpy(d->storage[pba].hash, block->hash);
+        while (d->storage[pba].lba_capacity < d->storage[pba].referenced_count)
         {
-            if (strcmp(block->hash, d->storage[pba].hash) != 0)
-            {
-                fprintf(stderr, "%s will be write\n", block->hash);
-                fprintf(stderr, "%s in storage\n", d->storage[pba].hash);
-                fprintf(stderr, "lba = %lu\n", block->lba[0]);
-                fprintf(stderr, "pba = %lu\n", pba);
-                output_disk_info(d);
-                output_ltp_table(d);
-                output_ptt_table(d);
-                exit(EXIT_FAILURE);
-            }
-            unsigned referenced_count = d->storage[pba].referenced_count;
-            if (referenced_count + 1 > d->storage[pba].lba_capacity)
-                increase_storage_lba_capacity(d, pba);
-            if (!is_lba_in_storage(d, pba, block->lba[0]))
-                d->storage[pba].lba[referenced_count] = block->lba[0];
-            return;
+            increase_storage_lba_capacity(d, pba);
         }
-        else
+        for (size_t j = 0; j < block->referenced_count + 1; j++)
         {
-            if (!pass)
-            {
-                d->storage[pba].lba[0] = block->lba[0];
-                strcpy(d->storage[pba].hash, block->hash);
-                batch_add(d, pba, &gbtable);
-            }
+            d->storage[pba].lba[j] = block->lba[j];
+            dedupe_update_ltp_table(d, block->lba[j], pba, block->hash);
         }
-
-        /* reset block */
-        block->dedupe = false;
-        strcpy(block->hash, "");
-        ;
-        for (size_t i = 0; i <= block->referenced_count; i++)
-        {
-            block->lba[i] = 0;
-        }
-        block->referenced_count = 0;
+        batch_add(d, pba, &gbtable);
         batch_write(d, &gbtable);
     }
     d->report.used_buffer_count = 0;
