@@ -12,11 +12,11 @@ Parse instructions [OK]
 -------------------------
 Time information:
 
-43.000000 seconds total
+262.000000 seconds total
 -------------------------
 Disk information:
 
-Size of disk = 43 GB
+Size of disk = 280 GB
 -------------------------
 Transaction information:
 
@@ -29,29 +29,29 @@ Total number of invalid write       =                0 blocks
 Total size of read instructions   =                0 MB
 Total size of write instructions  =             1953 MB
 
-Total block swap count      =                  34 blocks
+Total block swap count      =                4995 blocks
 Total inversion swap count      =                   0 blocks
 #########################
 ######## Latency ########
 #########################
 Secure Deletion Latency     =                   0 ns
-Data Write Latency          =      28877781863692 ns
-Data Read Latency           =          1012291588 ns
+Data Write Latency          =       7952104458402 ns
+Data Read Latency           =        148717543590 ns
 #########################
 ######### Size ##########
 #########################
-Accumulated Write Size      =        670604197888 B
-Accumulated Rewrite Size    =        421680644096 B
-Accumulated Reread Size     =        640851902464 B
+Accumulated Write Size      =        450709422080 B
+Accumulated Rewrite Size    =         34011611136 B
+Accumulated Reread Size     =         51409584128 B
 #########################
 Secure Deletion:
 Accumulated Write Size      =                   0 B
 Accumulated Rewrite Size    =                   0 B
 Accumulated Reread Size     =                   0 B
 #########################
-Total Write Block Size      =        670604197888 B
-Total Read Block Size       =            71303168 B
+Total Write Block Size      =        449683914752 B
+Total Read Block Size       =         10475274240 B
 Total Delete Block Size     =                   0 B
 #########################
-Storage usage               =               79.08  %
+Storage usage               =               81.00  %
 End

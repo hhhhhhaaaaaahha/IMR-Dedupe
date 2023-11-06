@@ -143,13 +143,94 @@ DISKSIZE = 1100
 run: new_alloc_run # trimrun trimv2run deleterun dedupeoriginrun # nodeduperun
 
 new_alloc_run: bin/new_alloc
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/test1.txt -s 37 -l 2000
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/test2.txt -s 43 -l 2000
-	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/test3.txt -s 68 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/test1.txt -s 37 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/test2.txt -s 43 -l 2000
+	# ./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/test3.txt -s 68 -l 2000
 
 	# ./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/420/new_alloc-user000_new_420.txt -s 420 -l 2000
 	# ./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/470/new_alloc-user000_new_470.txt -s 470 -l 2000
 	# ./bin/new_alloc -d -i ../trace/user000_new.csv -o report/ray/user000_new/763/new_alloc-user000_new_763.txt -s 763 -l 2000
+
+	./bin/new_alloc -d -i ../trace/user002_new.csv -o report/ray/user002_new/600/new_alloc-user002_new_600.txt -s 600 -l 2000
+	./bin/new_alloc -d -i ../trace/user002_new.csv -o report/ray/user002_new/665/new_alloc-user002_new_665.txt -s 665 -l 2000
+	./bin/new_alloc -d -i ../trace/user002_new.csv -o report/ray/user002_new/1096/new_alloc-user002_new_1096.txt -s 1096 -l 2000
+
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/37/new_alloc-normal_10_37.txt -s 37 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/43/new_alloc-normal_10_43.txt -s 43 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_10.csv -o report/ray/normal_10/68/new_alloc-normal_10_68.txt -s 68 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/55/new_alloc-normal_15_55.txt -s 55 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/63/new_alloc-normal_15_63.txt -s 63 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_15.csv -o report/ray/normal_15/102/new_alloc-normal_15_102.txt -s 102 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/78/new_alloc-normal_20_78.txt -s 78 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/88/new_alloc-normal_20_88.txt -s 88 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_20.csv -o report/ray/normal_20/138/new_alloc-normal_20_138.txt -s 138 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/100/new_alloc-normal_25_100.txt -s 100 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/110/new_alloc-normal_25_110.txt -s 110 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_25.csv -o report/ray/normal_25/178/new_alloc-normal_25_178.txt -s 178 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/280/new_alloc-normal_30_280.txt -s 280 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/250/new_alloc-normal_30_250.txt -s 250 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_30.csv -o report/ray/normal_30/450/new_alloc-normal_30_450.txt -s 450 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/150/new_alloc-normal_35_150.txt -s 150 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/170/new_alloc-normal_35_170.txt -s 170 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_35.csv -o report/ray/normal_35/270/new_alloc-normal_35_270.txt -s 270 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/275/new_alloc-normal_40_275.txt -s 275 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/235/new_alloc-normal_40_235.txt -s 235 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_40.csv -o report/ray/normal_40/430/new_alloc-normal_40_430.txt -s 430 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/242/new_alloc-normal_45_242.txt -s 242 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/211/new_alloc-normal_45_211.txt -s 211 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_45.csv -o report/ray/normal_45/380/new_alloc-normal_45_380.txt -s 380 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/245/new_alloc-normal_50_245.txt -s 245 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/285/new_alloc-normal_50_285.txt -s 285 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_50.csv -o report/ray/normal_50/455/new_alloc-normal_50_455.txt -s 455 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/340/new_alloc-normal_55_340.txt -s 340 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/298/new_alloc-normal_55_298.txt -s 298 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_55.csv -o report/ray/normal_55/525/new_alloc-normal_55_525.txt -s 525 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/340/new_alloc-normal_60_340.txt -s 340 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/385/new_alloc-normal_60_385.txt -s 385 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_60.csv -o report/ray/normal_60/610/new_alloc-normal_60_610.txt -s 610 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/445/new_alloc-normal_65_445.txt -s 445 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/385/new_alloc-normal_65_385.txt -s 385 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_65.csv -o report/ray/normal_65/695/new_alloc-normal_65_695.txt -s 695 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/450/new_alloc-normal_70_450.txt -s 450 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/500/new_alloc-normal_70_500.txt -s 500 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_70.csv -o report/ray/normal_70/800/new_alloc-normal_70_800.txt -s 800 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/570/new_alloc-normal_75_570.txt -s 570 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/500/new_alloc-normal_75_500.txt -s 500 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_75.csv -o report/ray/normal_75/915/new_alloc-normal_75_915.txt -s 915 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/550/new_alloc-normal_80_550.txt -s 550 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/470/new_alloc-normal_80_470.txt -s 470 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_80.csv -o report/ray/normal_80/880/new_alloc-normal_80_880.txt -s 880 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/550/new_alloc-normal_85_550.txt -s 550 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/635/new_alloc-normal_85_635.txt -s 635 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_85.csv -o report/ray/normal_85/1020/new_alloc-normal_85_1020.txt -s 1020 -l 2000
+	
+	./bin/new_alloc -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/760/new_alloc-normal_90_760.txt -s 760 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/670/new_alloc-normal_90_670.txt -s 670 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_90.csv -o report/ray/normal_90/1200/new_alloc-normal_90_1200.txt -s 1200 -l 2000
+
+	./bin/new_alloc -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/580/new_alloc-normal_95_580.txt -s 580 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/630/new_alloc-normal_95_630.txt -s 630 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_95.csv -o report/ray/normal_95/1030/new_alloc-normal_95_1030.txt -s 1030 -l 2000
+
+	./bin/new_alloc -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/850/new_alloc-normal_100_850.txt -s 850 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/785/new_alloc-normal_100_785.txt -s 785 -l 2000
+	./bin/new_alloc -d -i ../trace/normal/normal_100.csv -o report/ray/normal_100/1400/new_alloc-normal_100_1400.txt -s 1300 -l 2000
+
 
 
 nodeduperun: bin/nodedupe
